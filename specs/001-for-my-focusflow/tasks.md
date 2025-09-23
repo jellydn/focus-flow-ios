@@ -14,12 +14,12 @@
 - Tests only for logic/state (skip UI components per requirements)
 
 ## Phase 3.1: Setup
-- [ ] T001 Create Expo project using CLI with TypeScript template at repository root
-- [ ] T002 Initialize Bun package manager and configure package.json with Expo dependencies
-- [ ] T003 [P] Configure Biome for linting and formatting in biome.json
-- [ ] T004 [P] Configure Vitest for testing in vitest.config.ts
-- [ ] T005 [P] Set up TypeScript strict configuration in tsconfig.json
-- [ ] T006 [P] Configure Expo development build and notifications in app.json
+- [x] T001 Create Expo project using CLI with TypeScript template at repository root
+- [x] T002 Initialize Bun package manager and configure package.json with Expo dependencies
+- [x] T003 [P] Configure Biome for linting and formatting in biome.json
+- [x] T004 [P] Configure Vitest for testing in vitest.config.ts
+- [x] T005 [P] Set up TypeScript strict configuration in tsconfig.json
+- [x] T006 [P] Configure Expo development build and notifications in app.json
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
