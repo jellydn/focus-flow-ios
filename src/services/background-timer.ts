@@ -38,7 +38,7 @@ export class BackgroundTimerService {
     };
 
     try {
-      await BackgroundFetch.startAsync(BACKGROUND_TIMER_TASK, {
+      await BackgroundFetch.registerTaskAsync(BACKGROUND_TIMER_TASK, {
         minimumInterval: 15000, // 15 seconds minimum interval
         stopOnTerminate: false,
         startOnBoot: false,
@@ -50,7 +50,7 @@ export class BackgroundTimerService {
 
   async stopTask(): Promise<void> {
     try {
-      await BackgroundFetch.stopAsync(BACKGROUND_TIMER_TASK);
+      await BackgroundFetch.unregisterTaskAsync(BACKGROUND_TIMER_TASK);
       this.taskOptions = null;
     } catch (error) {
       console.error('Failed to stop background task:', error);

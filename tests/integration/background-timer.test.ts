@@ -19,7 +19,7 @@ describe('Background Timer Recovery Integration Tests', () => {
   describe('Background Timer Continuity', () => {
     it('should maintain timer accuracy during background operation', async () => {
       // Start work session
-      const startTime = Date.now();
+      const _startTime = Date.now();
       const session = await timerService.startSession('work', 1500);
       expect(session.remainingTime).toBe(1500);
 
@@ -43,7 +43,7 @@ describe('Background Timer Recovery Integration Tests', () => {
 
     it('should handle timer completion during background', async () => {
       // Start short session for testing
-      const session = await timerService.startSession('work', 5); // 5 seconds
+      const _session = await timerService.startSession('work', 5); // 5 seconds
 
       // Simulate app going to background
       await appStateService.handleAppStateChange('background');
@@ -63,7 +63,7 @@ describe('Background Timer Recovery Integration Tests', () => {
 
     it('should maintain paused state during background', async () => {
       // Start and pause session
-      const session = await timerService.startSession('work', 1500);
+      const _session = await timerService.startSession('work', 1500);
       const pausedSession = await timerService.pauseSession();
       const remainingAtPause = pausedSession.remainingTime;
 
@@ -79,7 +79,7 @@ describe('Background Timer Recovery Integration Tests', () => {
     });
 
     it('should recover correctly from multiple background/foreground cycles', async () => {
-      const session = await timerService.startSession('work', 60); // 60 seconds
+      const _session = await timerService.startSession('work', 60); // 60 seconds
       let totalBackgroundTime = 0;
 
       // Multiple background/foreground cycles
@@ -119,7 +119,7 @@ describe('Background Timer Recovery Integration Tests', () => {
     });
 
     it('should unregister background task when session completes', async () => {
-      const session = await timerService.startSession('work', 5);
+      const _session = await timerService.startSession('work', 5);
 
       // Wait for completion
       vi.advanceTimersByTime(6000);
@@ -184,8 +184,8 @@ describe('Background Timer Recovery Integration Tests', () => {
     });
 
     it('should handle app termination and restart', async () => {
-      const session = await timerService.startSession('work', 1500);
-      const startTime = Date.now();
+      const _session = await timerService.startSession('work', 1500);
+      const _startTime = Date.now();
 
       // Simulate app termination (immediate background)
       await appStateService.handleAppStateChange('background');
@@ -212,7 +212,7 @@ describe('Background Timer Recovery Integration Tests', () => {
 
   describe('System Time Changes', () => {
     it('should handle device time changes gracefully', async () => {
-      const session = await timerService.startSession('work', 1500);
+      const _session = await timerService.startSession('work', 1500);
       const startTime = Date.now();
 
       // Simulate device time jumping forward
@@ -234,7 +234,7 @@ describe('Background Timer Recovery Integration Tests', () => {
     });
 
     it('should handle device time jumping backward', async () => {
-      const session = await timerService.startSession('work', 1500);
+      const _session = await timerService.startSession('work', 1500);
 
       // Let some time pass normally
       vi.advanceTimersByTime(10000); // 10 seconds
@@ -254,7 +254,7 @@ describe('Background Timer Recovery Integration Tests', () => {
 
   describe('Low Power Mode Integration', () => {
     it('should continue timing in low power mode', async () => {
-      const session = await timerService.startSession('work', 1500);
+      const _session = await timerService.startSession('work', 1500);
 
       // Simulate low power mode activation
       await appStateService.handleLowPowerMode(true);

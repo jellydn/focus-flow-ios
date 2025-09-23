@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import { assign, createMachine, interpret } from 'xstate';
-import type { CycleProgress, PomodorocoCycle } from '@/types/pomodoro-cycle';
+import type { CycleProgress } from '@/types/pomodoro-cycle';
 import { CYCLE_WORKFLOW } from '@/types/pomodoro-cycle';
 import type { SessionType } from '@/types/timer-session';
 

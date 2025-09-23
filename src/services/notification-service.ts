@@ -97,10 +97,7 @@ export class NotificationService {
       await Notifications.scheduleNotificationAsync({
         identifier: `session-${session.id}`,
         content,
-        trigger: {
-          type: 'date',
-          date: scheduledTime,
-        },
+        trigger: scheduledTime,
       });
 
       console.log(`Notification scheduled for ${scheduledTime.toISOString()}`);

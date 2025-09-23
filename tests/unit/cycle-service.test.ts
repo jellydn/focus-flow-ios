@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // This will fail until implementation exists
 import { CycleService } from '@/services/cycle-service';
-import type { CycleProgress, CycleServiceContract, PomodorocoCycle } from '@/types/pomodoro-cycle';
+import type { CycleServiceContract } from '@/types/pomodoro-cycle';
 
 describe('CycleService Contract Tests', () => {
   let cycleService: CycleServiceContract;

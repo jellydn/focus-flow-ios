@@ -146,14 +146,14 @@ export class PersistenceService {
     return null;
   }
 
-  private dateReplacer(key: string, value: any): any {
+  private dateReplacer(_key: string, value: any): any {
     if (value instanceof Date) {
       return { __type: 'Date', value: value.toISOString() };
     }
     return value;
   }
 
-  private dateReviver(key: string, value: any): any {
+  private dateReviver(_key: string, value: any): any {
     if (value && typeof value === 'object' && value.__type === 'Date') {
       return new Date(value.value);
     }

@@ -137,13 +137,13 @@ export class HistoryService implements HistoryServiceContract {
     const bestDayHistory = weekHistory.reduce(
       (best, current) =>
         current.completedWorkSessions > best.completedWorkSessions ? current : best,
-      weekHistory[0] || { date: weekStart.toISOString().split('T')[0], completedWorkSessions: 0 },
+      weekHistory[0] || { date: weekStart.toISOString().split('T')[0]!, completedWorkSessions: 0 },
     );
 
     const streakDays = await this.getCurrentStreak();
 
     return {
-      weekStart: weekStart.toISOString().split('T')[0],
+      weekStart: weekStart.toISOString().split('T')[0]!,
       totalSessions,
       totalFocusHours,
       averageSessionsPerDay,
@@ -162,7 +162,7 @@ export class HistoryService implements HistoryServiceContract {
       const checkDate = new Date(today);
 
       for (const history of sortedHistory) {
-        const historyDate = checkDate.toISOString().split('T')[0];
+        const historyDate = checkDate.toISOString().split('T')[0]!;
 
         if (history.date === historyDate && history.completedWorkSessions > 0) {
           streak++;
@@ -208,8 +208,8 @@ export class HistoryService implements HistoryServiceContract {
     startDate.setMonth(endDate.getMonth() - months);
 
     const history = await this.getHistoryRange(
-      startDate.toISOString().split('T')[0],
-      endDate.toISOString().split('T')[0],
+      startDate.toISOString().split('T')[0]!,
+      endDate.toISOString().split('T')[0]!,
     );
 
     return history.map((h) => ({
@@ -237,7 +237,7 @@ export class HistoryService implements HistoryServiceContract {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - 30);
-      const cutoffString = cutoffDate.toISOString().split('T')[0];
+      const cutoffString = cutoffDate.toISOString().split('T')[0]!;
 
       const allHistory = await this.loadAllHistory();
       const filteredHistory = allHistory.filter((h) => h.date >= cutoffString);
@@ -252,7 +252,7 @@ export class HistoryService implements HistoryServiceContract {
     try {
       const cutoffDate = new Date();
       cutoffDate.setMonth(cutoffDate.getMonth() - 6);
-      const cutoffString = cutoffDate.toISOString().split('T')[0];
+      const cutoffString = cutoffDate.toISOString().split('T')[0]!;
 
       const allAggregates = await this.loadAllAggregates();
       const filteredAggregates = allAggregates.filter((a) => a.date >= cutoffString);
@@ -323,7 +323,7 @@ export class HistoryService implements HistoryServiceContract {
   }
 
   private getTodayDateString(): string {
-    return new Date().toISOString().split('T')[0];
+    return new Date().toISOString().split('T')[0]!;
   }
 
   private isValidDateFormat(date: string): boolean {

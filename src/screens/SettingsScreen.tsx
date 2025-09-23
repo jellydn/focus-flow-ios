@@ -26,7 +26,7 @@ export function SettingsScreen() {
   useEffect(() => {
     loadSettings();
     setupEventListeners();
-  }, []);
+  }, [loadSettings, setupEventListeners]);
 
   const loadSettings = async () => {
     try {

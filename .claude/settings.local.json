@@ -17,7 +17,9 @@
       "Bash(git commit:*)",
       "Bash(bun test:*)",
       "Bash(bun run lint:*)",
-      "Bash(bun run:*)"
+      "Bash(bun run:*)",
+      "Bash(npx expo start:*)",
+      "Bash(bun start:*)"
     ],
     "deny": [],
     "ask": []

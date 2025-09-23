@@ -1,5 +1,5 @@
 import { assign, createMachine, interpret } from 'xstate';
-import type { SessionStatus, SessionType, TimerSession } from '@/types/timer-session';
+import type { SessionType } from '@/types/timer-session';
 
 interface TimerContext {
   sessionType: SessionType | null;
@@ -39,7 +39,7 @@ export const timerMachine = createMachine({
       on: {
         START_SESSION: {
           target: 'running',
-          actions: assign((context, event) => ({
+          actions: assign((_context, event) => ({
             sessionType: event.sessionType,
             duration: event.duration,
             remainingTime: event.duration,
@@ -49,7 +49,7 @@ export const timerMachine = createMachine({
             pausedAt: undefined,
             resumedAt: undefined,
           })),
-          cond: (context, event) =>
+          cond: (_context, event) =>
             event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
         },
       },
@@ -71,7 +71,7 @@ export const timerMachine = createMachine({
           actions: assign(initialContext),
         },
         TICK: {
-          actions: assign((context, event) => ({
+          actions: assign((_context, event) => ({
             remainingTime: Math.max(0, event.remainingTime),
           })),
         },
@@ -84,7 +84,7 @@ export const timerMachine = createMachine({
         },
         START_SESSION: {
           target: 'running',
-          actions: assign((context, event) => ({
+          actions: assign((_context, event) => ({
             sessionType: event.sessionType,
             duration: event.duration,
             remainingTime: event.duration,
@@ -94,7 +94,7 @@ export const timerMachine = createMachine({
             pausedAt: undefined,
             resumedAt: undefined,
           })),
-          cond: (context, event) =>
+          cond: (_context, event) =>
             event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
         },
       },
@@ -117,7 +117,7 @@ export const timerMachine = createMachine({
         },
         START_SESSION: {
           target: 'running',
-          actions: assign((context, event) => ({
+          actions: assign((_context, event) => ({
             sessionType: event.sessionType,
             duration: event.duration,
             remainingTime: event.duration,
@@ -127,7 +127,7 @@ export const timerMachine = createMachine({
             pausedAt: undefined,
             resumedAt: undefined,
           })),
-          cond: (context, event) =>
+          cond: (_context, event) =>
             event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
         },
       },
@@ -136,7 +136,7 @@ export const timerMachine = createMachine({
       on: {
         START_SESSION: {
           target: 'running',
-          actions: assign((context, event) => ({
+          actions: assign((_context, event) => ({
             sessionType: event.sessionType,
             duration: event.duration,
             remainingTime: event.duration,
@@ -146,7 +146,7 @@ export const timerMachine = createMachine({
             pausedAt: undefined,
             resumedAt: undefined,
           })),
-          cond: (context, event) =>
+          cond: (_context, event) =>
             event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
         },
         RESET: {

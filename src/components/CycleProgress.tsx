@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { CycleProgress as CycleProgressType } from '@/types/pomodoro-cycle';
 import type { SessionType } from '@/types/timer-session';

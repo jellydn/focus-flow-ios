@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import CycleProgress from '@/components/CycleProgress';
 import ProgressRing from '@/components/ProgressRing';
@@ -56,7 +56,12 @@ export function TimerScreen() {
     } finally {
       setIsLoading(false);
     }
-  }, [timerService, cycleService, notificationService]);
+  }, [
+    timerService,
+    cycleService,
+    notificationService, // Setup event listeners
+    setupEventListeners,
+  ]);
 
   const setupEventListeners = useCallback(() => {
     // Timer events
@@ -84,7 +89,7 @@ export function TimerScreen() {
         ],
       );
     });
-  }, [timerService, cycleService]);
+  }, [timerService, cycleService, handleSessionComplete, startNewCycle, updateNextSessionType]);
 
   const updateNextSessionType = useCallback(async () => {
     try {
@@ -110,7 +115,7 @@ export function TimerScreen() {
         console.error('Failed to handle session completion:', error);
       }
     },
-    [cycleService],
+    [cycleService, getSessionCompleteMessage],
   );
 
   const getSessionCompleteMessage = (completed: SessionType, next: SessionType): string => {
@@ -145,7 +150,7 @@ export function TimerScreen() {
       console.error('Failed to start session:', error);
       Alert.alert('Error', 'Failed to start timer. Please try again.');
     }
-  }, [timerService, notificationService, nextSessionType, cycleProgress]);
+  }, [timerService, notificationService, nextSessionType, cycleProgress, getSessionDuration]);
 
   const pauseSession = useCallback(async () => {
     try {

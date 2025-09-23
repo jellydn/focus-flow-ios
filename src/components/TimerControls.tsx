@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { SessionStatus, SessionType } from '@/types/timer-session';
 
