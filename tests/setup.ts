@@ -3,21 +3,25 @@ import { vi } from 'vitest';
 
 // React Native environment globals
 global.__DEV__ = true;
+(globalThis as any).__DEV__ = true;
 
-// Setup DOM environment
-Object.defineProperty(globalThis, 'window', {
-  value: {
-    localStorage: {
-      getItem: vi.fn(),
-      setItem: vi.fn(),
-      removeItem: vi.fn(),
-      clear: vi.fn(),
-      key: vi.fn(),
-      length: 0,
-    },
-  },
-  writable: true,
-});
+// Setup DOM environment with proper window implementation
+const mockLocalStorage = {
+  getItem: vi.fn().mockImplementation((key: string) => null),
+  setItem: vi.fn().mockImplementation((key: string, value: string) => {}),
+  removeItem: vi.fn().mockImplementation((key: string) => {}),
+  clear: vi.fn().mockImplementation(() => {}),
+  key: vi.fn().mockImplementation((index: number) => null),
+  length: 0,
+};
+
+// Set up window globally before any imports happen
+(global as any).window = {
+  localStorage: mockLocalStorage,
+};
+
+// Also ensure it's available as a direct global
+(global as any).localStorage = mockLocalStorage;
 
 // Mock React Native modules
 vi.mock('react-native', () => ({
@@ -51,10 +55,7 @@ const mockAsyncStorage = {
   multiSet: vi.fn(() => Promise.resolve()),
 };
 
-vi.mock('@react-native-async-storage/async-storage', () => ({
-  default: mockAsyncStorage,
-  ...mockAsyncStorage,
-}));
+vi.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
 
 // Mock Expo modules
 vi.mock('expo-notifications', () => ({
@@ -66,6 +67,12 @@ vi.mock('expo-notifications', () => ({
   getAllScheduledNotificationsAsync: vi.fn(() => Promise.resolve([])),
   getPresentedNotificationsAsync: vi.fn(() => Promise.resolve([])),
   setNotificationHandler: vi.fn(),
+  SchedulableTriggerInputTypes: {
+    TIME_INTERVAL: 'timeInterval',
+    CALENDAR: 'calendar',
+    LOCATION: 'location',
+    PUSH: 'push',
+  },
 }));
 
 vi.mock('expo-task-manager', () => ({
@@ -104,3 +111,12 @@ vi.mock('@react-navigation/native', () => ({
 
 // Global test utilities
 global.setImmediate = vi.fn((cb) => setTimeout(cb, 0));
+
+// Mock console methods for testing
+global.console = {
+  ...console,
+  error: vi.fn(),
+  warn: vi.fn(),
+  log: vi.fn(),
+  info: vi.fn(),
+};

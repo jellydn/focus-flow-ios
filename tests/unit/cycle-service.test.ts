@@ -52,7 +52,8 @@ describe('CycleService Contract Tests', () => {
     it('should abandon a cycle', async () => {
       await cycleService.startNewCycle();
 
-      await expect(cycleService.abandonCycle()).resolves.not.toThrow();
+      // Should not throw when abandoning an active cycle
+      await cycleService.abandonCycle();
 
       const currentCycle = await cycleService.getCurrentCycle();
       expect(currentCycle).toBeNull();
