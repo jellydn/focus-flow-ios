@@ -1,4 +1,4 @@
-import { createStore } from '@xstate/store';
+import { createStore, from } from '@xstate/store';
 import type { PomodorocoCycle } from '@/types/pomodoro-cycle';
 import type { TimerSession } from '@/types/timer-session';
 import type { UserSettings } from '@/types/user-settings';
@@ -43,10 +43,10 @@ export const initialState: AppState = {
   },
 };
 
-export const appStore = createStore(initialState, {
+export const appStore = from(initialState, {
   // Timer events
   startSession: {
-    timer: (context, event: { session: TimerSession }) => ({
+    timer: (context: AppState, event: { session: TimerSession }) => ({
       ...context.timer,
       session: event.session,
       isRunning: true,
@@ -55,7 +55,7 @@ export const appStore = createStore(initialState, {
   },
 
   pauseSession: {
-    timer: (context) => ({
+    timer: (context: AppState) => ({
       ...context.timer,
       isRunning: false,
       isPaused: true,
@@ -63,7 +63,7 @@ export const appStore = createStore(initialState, {
   },
 
   resumeSession: {
-    timer: (context) => ({
+    timer: (context: AppState) => ({
       ...context.timer,
       isRunning: true,
       isPaused: false,
@@ -71,7 +71,7 @@ export const appStore = createStore(initialState, {
   },
 
   stopSession: {
-    timer: (context) => ({
+    timer: (context: AppState) => ({
       ...context.timer,
       session: null,
       isRunning: false,
@@ -80,7 +80,7 @@ export const appStore = createStore(initialState, {
   },
 
   updateSessionTime: {
-    timer: (context, event: { remainingTime: number }) => ({
+    timer: (context: AppState, event: { remainingTime: number }) => ({
       ...context.timer,
       session: context.timer.session
         ? { ...context.timer.session, remainingTime: event.remainingTime }
@@ -89,7 +89,7 @@ export const appStore = createStore(initialState, {
   },
 
   completeSession: {
-    timer: (context, event: { completedSession: TimerSession }) => ({
+    timer: (context: AppState, event: { completedSession: TimerSession }) => ({
       ...context.timer,
       session: event.completedSession,
       isRunning: false,
@@ -99,7 +99,7 @@ export const appStore = createStore(initialState, {
 
   // Cycle events
   startCycle: {
-    cycle: (context, event: { cycle: PomodorocoCycle }) => ({
+    cycle: (context: AppState, event: { cycle: PomodorocoCycle }) => ({
       ...context.cycle,
       current: event.cycle,
       position: 1,
@@ -107,7 +107,7 @@ export const appStore = createStore(initialState, {
   },
 
   updateCycleProgress: {
-    cycle: (context, event: { position: number; cycle: PomodorocoCycle }) => ({
+    cycle: (context: AppState, event: { position: number; cycle: PomodorocoCycle }) => ({
       ...context.cycle,
       current: event.cycle,
       position: event.position,
@@ -115,7 +115,7 @@ export const appStore = createStore(initialState, {
   },
 
   completeCycle: {
-    cycle: (context, event: { completedCycle: PomodorocoCycle }) => ({
+    cycle: (context: AppState, event: { completedCycle: PomodorocoCycle }) => ({
       ...context.cycle,
       current: event.completedCycle,
     }),
@@ -131,7 +131,7 @@ export const appStore = createStore(initialState, {
 
   // Settings events
   updateSettings: {
-    settings: (_context, event: { settings: UserSettings }) => event.settings,
+    settings: (_context: AppState, event: { settings: UserSettings }) => event.settings,
   },
 
   // Background events
@@ -150,7 +150,7 @@ export const appStore = createStore(initialState, {
   },
 
   // Hydrate from persistence
-  hydrate: (_context, event: { state: AppState }) => event.state,
+  hydrate: (_context: AppState, event: { state: AppState }) => event.state,
 });
 
 // Selectors

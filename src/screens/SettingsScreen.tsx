@@ -23,11 +23,6 @@ export function SettingsScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [settingsService] = useState(() => new SettingsService());
 
-  useEffect(() => {
-    loadSettings();
-    setupEventListeners();
-  }, [loadSettings, setupEventListeners]);
-
   const loadSettings = async () => {
     try {
       setIsLoading(true);
@@ -46,6 +41,11 @@ export function SettingsScreen() {
       setSettings(newSettings);
     });
   };
+
+  useEffect(() => {
+    loadSettings();
+    setupEventListeners();
+  }, [loadSettings, setupEventListeners]);
 
   const updateSetting = async <K extends keyof UserSettings>(key: K, value: UserSettings[K]) => {
     try {

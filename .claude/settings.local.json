@@ -19,7 +19,8 @@
       "Bash(bun run lint:*)",
       "Bash(bun run:*)",
       "Bash(npx expo start:*)",
-      "Bash(bun start:*)"
+      "Bash(bun start:*)",
+      "Bash(make:*)"
     ],
     "deny": [],
     "ask": []

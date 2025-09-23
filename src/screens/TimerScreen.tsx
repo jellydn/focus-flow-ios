@@ -24,6 +24,99 @@ export function TimerScreen() {
   const [settingsService] = useState(() => new SettingsService());
   const [notificationService] = useState(() => new NotificationService());
 
+  const updateNextSessionType = useCallback(async () => {
+    try {
+      const nextType = await cycleService.getNextSessionType();
+      setNextSessionType(nextType);
+    } catch (error) {
+      console.error('Failed to get next session type:', error);
+    }
+  }, [cycleService]);
+
+  const getSessionCompleteMessage = (completed: SessionType, next: SessionType): string => {
+    if (completed === 'work') {
+      return next === 'longBreak'
+        ? "Excellent work! Time for a long break - you've earned it!"
+        : 'Great focus! Time for a short break.';
+    }
+
+    if (completed === 'longBreak') {
+      return "Refreshed and ready! Let's start a new Pomodoro cycle.";
+    }
+
+    return 'Break time over! Ready to get back to work?';
+  };
+
+  const handleSessionComplete = useCallback(
+    async (session: TimerSession) => {
+      try {
+        // Record session completion in cycle
+        await cycleService.recordSessionCompletion(session.id);
+
+        // Show completion notification
+        const nextType = await cycleService.getNextSessionType();
+        const message = getSessionCompleteMessage(session.type, nextType);
+
+        Alert.alert('Session Complete! ✨', message, [{ text: 'Continue', onPress: () => {} }]);
+      } catch (error) {
+        console.error('Failed to handle session completion:', error);
+      }
+    },
+    [cycleService, getSessionCompleteMessage],
+  );
+
+  const startNewCycle = useCallback(async () => {
+    try {
+      await cycleService.startNewCycle();
+      const progress = await cycleService.getCycleProgress();
+      setCycleProgress(progress);
+      await updateNextSessionType();
+    } catch (error) {
+      console.error('Failed to start new cycle:', error);
+    }
+  }, [cycleService, updateNextSessionType]);
+
+  const setupEventListeners = useCallback(() => {
+    // Timer events
+    timerService.onSessionStateChange((session: TimerSession) => {
+      setCurrentSession(session);
+    });
+
+    timerService.onSessionComplete((session: TimerSession) => {
+      handleSessionComplete(session);
+    });
+
+    // Cycle events
+    cycleService.onProgressUpdate((progress: CycleProgressType) => {
+      setCycleProgress(progress);
+      updateNextSessionType();
+    });
+
+    cycleService.onCycleComplete(() => {
+      Alert.alert(
+        'Cycle Complete! 🎉',
+        "Great job! You've completed a full Pomodoro cycle. Ready to start a new one?",
+        [
+          { text: 'Take a Break', style: 'cancel' },
+          { text: 'Start New Cycle', onPress: startNewCycle },
+        ],
+      );
+    });
+  }, [timerService, cycleService, handleSessionComplete, startNewCycle, updateNextSessionType]);
+
+  const getSessionDuration = (type: SessionType): number => {
+    switch (type) {
+      case 'work':
+        return settingsService.getWorkDuration();
+      case 'shortBreak':
+        return settingsService.getShortBreakDuration();
+      case 'longBreak':
+        return settingsService.getLongBreakDuration();
+      default:
+        return 1500;
+    }
+  };
+
   // Initialize services and load current state
   const initializeServices = useCallback(async () => {
     try {
@@ -56,81 +149,7 @@ export function TimerScreen() {
     } finally {
       setIsLoading(false);
     }
-  }, [
-    timerService,
-    cycleService,
-    notificationService, // Setup event listeners
-    setupEventListeners,
-  ]);
-
-  const setupEventListeners = useCallback(() => {
-    // Timer events
-    timerService.onSessionStateChange((session: TimerSession) => {
-      setCurrentSession(session);
-    });
-
-    timerService.onSessionComplete((session: TimerSession) => {
-      handleSessionComplete(session);
-    });
-
-    // Cycle events
-    cycleService.onProgressUpdate((progress: CycleProgressType) => {
-      setCycleProgress(progress);
-      updateNextSessionType();
-    });
-
-    cycleService.onCycleComplete(() => {
-      Alert.alert(
-        'Cycle Complete! 🎉',
-        "Great job! You've completed a full Pomodoro cycle. Ready to start a new one?",
-        [
-          { text: 'Take a Break', style: 'cancel' },
-          { text: 'Start New Cycle', onPress: startNewCycle },
-        ],
-      );
-    });
-  }, [timerService, cycleService, handleSessionComplete, startNewCycle, updateNextSessionType]);
-
-  const updateNextSessionType = useCallback(async () => {
-    try {
-      const nextType = await cycleService.getNextSessionType();
-      setNextSessionType(nextType);
-    } catch (error) {
-      console.error('Failed to get next session type:', error);
-    }
-  }, [cycleService]);
-
-  const handleSessionComplete = useCallback(
-    async (session: TimerSession) => {
-      try {
-        // Record session completion in cycle
-        await cycleService.recordSessionCompletion(session.id);
-
-        // Show completion notification
-        const nextType = await cycleService.getNextSessionType();
-        const message = getSessionCompleteMessage(session.type, nextType);
-
-        Alert.alert('Session Complete! ✨', message, [{ text: 'Continue', onPress: () => {} }]);
-      } catch (error) {
-        console.error('Failed to handle session completion:', error);
-      }
-    },
-    [cycleService, getSessionCompleteMessage],
-  );
-
-  const getSessionCompleteMessage = (completed: SessionType, next: SessionType): string => {
-    if (completed === 'work') {
-      return next === 'longBreak'
-        ? "Excellent work! Time for a long break - you've earned it!"
-        : 'Great focus! Time for a short break.';
-    }
-
-    if (completed === 'longBreak') {
-      return "Refreshed and ready! Let's start a new Pomodoro cycle.";
-    }
-
-    return 'Break time over! Ready to get back to work?';
-  };
+  }, [timerService, cycleService, notificationService, setupEventListeners]);
 
   const startSession = useCallback(async () => {
     try {
@@ -189,30 +208,6 @@ export function TimerScreen() {
       console.error('Failed to reset session:', error);
     }
   }, [timerService, notificationService]);
-
-  const startNewCycle = useCallback(async () => {
-    try {
-      await cycleService.startNewCycle();
-      const progress = await cycleService.getCycleProgress();
-      setCycleProgress(progress);
-      await updateNextSessionType();
-    } catch (error) {
-      console.error('Failed to start new cycle:', error);
-    }
-  }, [cycleService, updateNextSessionType]);
-
-  const getSessionDuration = (type: SessionType): number => {
-    switch (type) {
-      case 'work':
-        return settingsService.getWorkDuration();
-      case 'shortBreak':
-        return settingsService.getShortBreakDuration();
-      case 'longBreak':
-        return settingsService.getLongBreakDuration();
-      default:
-        return 1500;
-    }
-  };
 
   const calculateProgress = (): number => {
     if (!currentSession) return 0;

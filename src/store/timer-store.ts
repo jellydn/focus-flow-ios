@@ -1,209 +1,130 @@
-import { assign, createMachine, interpret } from 'xstate';
+import { createStore, from } from '@xstate/store';
 import type { SessionType } from '@/types/timer-session';
 
-interface TimerContext {
+export interface TimerState {
   sessionType: SessionType | null;
   duration: number;
   remainingTime: number;
   cyclePosition: number;
   startedAt: Date | null;
   completedAt: Date | null;
-  pausedAt?: Date;
-  resumedAt?: Date;
+  pausedAt: Date | null;
+  resumedAt: Date | null;
+  status: 'idle' | 'running' | 'paused' | 'completed';
 }
 
-type TimerEvent =
-  | { type: 'START_SESSION'; sessionType: SessionType; duration: number; cyclePosition?: number }
-  | { type: 'PAUSE' }
-  | { type: 'RESUME' }
-  | { type: 'STOP' }
-  | { type: 'RESET' }
-  | { type: 'TICK'; remainingTime: number }
-  | { type: 'TIMER_COMPLETE' };
-
-const initialContext: TimerContext = {
+const initialState: TimerState = {
   sessionType: null,
   duration: 0,
   remainingTime: 0,
   cyclePosition: 0,
   startedAt: null,
   completedAt: null,
+  pausedAt: null,
+  resumedAt: null,
+  status: 'idle',
 };
 
-export const timerMachine = createMachine({
-  id: 'timer',
-  initial: 'idle',
-  context: initialContext,
-  states: {
-    idle: {
-      on: {
-        START_SESSION: {
-          target: 'running',
-          actions: assign((_context, event) => ({
-            sessionType: event.sessionType,
-            duration: event.duration,
-            remainingTime: event.duration,
-            cyclePosition: event.cyclePosition || 0,
-            startedAt: new Date(),
-            completedAt: null,
-            pausedAt: undefined,
-            resumedAt: undefined,
-          })),
-          cond: (_context, event) =>
-            event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
-        },
-      },
-    },
-    running: {
-      on: {
-        PAUSE: {
-          target: 'paused',
-          actions: assign({
-            pausedAt: () => new Date(),
-          }),
-        },
-        STOP: {
-          target: 'idle',
-          actions: assign(initialContext),
-        },
-        RESET: {
-          target: 'idle',
-          actions: assign(initialContext),
-        },
-        TICK: {
-          actions: assign((_context, event) => ({
-            remainingTime: Math.max(0, event.remainingTime),
-          })),
-        },
-        TIMER_COMPLETE: {
-          target: 'completed',
-          actions: assign({
-            remainingTime: 0,
-            completedAt: () => new Date(),
-          }),
-        },
-        START_SESSION: {
-          target: 'running',
-          actions: assign((_context, event) => ({
-            sessionType: event.sessionType,
-            duration: event.duration,
-            remainingTime: event.duration,
-            cyclePosition: event.cyclePosition || 0,
-            startedAt: new Date(),
-            completedAt: null,
-            pausedAt: undefined,
-            resumedAt: undefined,
-          })),
-          cond: (_context, event) =>
-            event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
-        },
-      },
-    },
-    paused: {
-      on: {
-        RESUME: {
-          target: 'running',
-          actions: assign({
-            resumedAt: () => new Date(),
-          }),
-        },
-        STOP: {
-          target: 'idle',
-          actions: assign(initialContext),
-        },
-        RESET: {
-          target: 'idle',
-          actions: assign(initialContext),
-        },
-        START_SESSION: {
-          target: 'running',
-          actions: assign((_context, event) => ({
-            sessionType: event.sessionType,
-            duration: event.duration,
-            remainingTime: event.duration,
-            cyclePosition: event.cyclePosition || 0,
-            startedAt: new Date(),
-            completedAt: null,
-            pausedAt: undefined,
-            resumedAt: undefined,
-          })),
-          cond: (_context, event) =>
-            event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
-        },
-      },
-    },
-    completed: {
-      on: {
-        START_SESSION: {
-          target: 'running',
-          actions: assign((_context, event) => ({
-            sessionType: event.sessionType,
-            duration: event.duration,
-            remainingTime: event.duration,
-            cyclePosition: event.cyclePosition || 0,
-            startedAt: new Date(),
-            completedAt: null,
-            pausedAt: undefined,
-            resumedAt: undefined,
-          })),
-          cond: (_context, event) =>
-            event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
-        },
-        RESET: {
-          target: 'idle',
-          actions: assign(initialContext),
-        },
-      },
-    },
-  },
+export const timerStore = from(initialState, {
+  startSession: (
+    state: TimerState,
+    event: { sessionType: SessionType; duration: number; cyclePosition?: number },
+  ) => ({
+    ...state,
+    sessionType: event.sessionType,
+    duration: event.duration,
+    remainingTime: event.duration,
+    cyclePosition: event.cyclePosition || 0,
+    startedAt: new Date(),
+    completedAt: null,
+    pausedAt: null,
+    resumedAt: null,
+    status: 'running',
+  }),
+
+  pauseSession: (state: TimerState) => ({
+    ...state,
+    pausedAt: new Date(),
+    status: 'paused',
+  }),
+
+  resumeSession: (state: TimerState) => ({
+    ...state,
+    resumedAt: new Date(),
+    pausedAt: null,
+    status: 'running',
+  }),
+
+  stopSession: () => ({
+    ...initialState,
+    status: 'idle',
+  }),
+
+  resetSession: (state: TimerState) => ({
+    ...state,
+    remainingTime: state.duration,
+    completedAt: null,
+    pausedAt: null,
+    resumedAt: null,
+    status: 'idle',
+  }),
+
+  tick: (state: TimerState, event: { remainingTime: number }) => ({
+    ...state,
+    remainingTime: event.remainingTime,
+  }),
+
+  completeSession: (state: TimerState) => ({
+    ...state,
+    completedAt: new Date(),
+    remainingTime: 0,
+    status: 'completed',
+  }),
 });
 
-export class TimerStateMachine {
-  private service: any;
-  private stateChangeCallbacks: Array<(state: any) => void> = [];
+// Helper functions
+export const timerHelpers = {
+  getSessionStatus: (state: TimerState): 'idle' | 'running' | 'paused' | 'completed' => {
+    return state.status;
+  },
 
-  constructor() {
-    this.service = interpret(timerMachine);
-    this.service.start();
+  isRunning: (state: TimerState): boolean => {
+    return state.status === 'running';
+  },
 
-    // Subscribe to state changes
-    this.service.subscribe((state: any) => {
-      this.stateChangeCallbacks.forEach((callback) => callback(state));
-    });
-  }
+  isPaused: (state: TimerState): boolean => {
+    return state.status === 'paused';
+  },
 
-  send(event: TimerEvent): void {
-    this.service.send(event);
-  }
+  isCompleted: (state: TimerState): boolean => {
+    return state.status === 'completed';
+  },
 
-  getState(): any {
-    return this.service.getSnapshot();
-  }
+  isIdle: (state: TimerState): boolean => {
+    return state.status === 'idle';
+  },
 
-  onStateChange(callback: (state: any) => void): void {
-    this.stateChangeCallbacks.push(callback);
-  }
+  getProgress: (state: TimerState): number => {
+    if (state.duration === 0) return 0;
+    return 1 - state.remainingTime / state.duration;
+  },
 
-  restoreState(persistedState: any): void {
-    // Create new machine with restored context
-    const restoredMachine = timerMachine.withContext({
-      ...initialContext,
-      ...persistedState,
-    });
+  getElapsedTime: (state: TimerState): number => {
+    if (!state.startedAt) return 0;
+    const now = new Date();
+    const elapsed = now.getTime() - state.startedAt.getTime();
+    return Math.floor(elapsed / 1000);
+  },
 
-    this.service.stop();
-    this.service = interpret(restoredMachine);
-    this.service.start();
+  getRemainingTimeFormatted: (state: TimerState): string => {
+    const minutes = Math.floor(state.remainingTime / 60);
+    const seconds = state.remainingTime % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  },
+};
 
-    // Re-subscribe to state changes
-    this.service.subscribe((state: any) => {
-      this.stateChangeCallbacks.forEach((callback) => callback(state));
-    });
-  }
+// Type exports
+export type TimerStore = typeof timerStore;
+export type TimerStoreSnapshot = ReturnType<TimerStore['getSnapshot']>;
 
-  stop(): void {
-    this.service.stop();
-  }
-}
-
-export default timerMachine;
+export default timerStore;
