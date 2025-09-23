@@ -3,17 +3,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // This will fail until implementation exists
 import { SettingsService } from '@/services/settings-service';
-import { PersistenceService } from '@/store/persistence';
 
 describe('Settings Persistence Integration Tests', () => {
   let settingsService: any;
-  let persistenceService: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
     AsyncStorage.clear();
     settingsService = new SettingsService();
-    persistenceService = new PersistenceService();
   });
 
   describe('Settings Persistence', () => {

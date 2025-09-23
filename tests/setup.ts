@@ -1,4 +1,5 @@
 // Vitest setup file for React Native testing
+import { vi } from 'vitest';
 
 // Mock React Native modules
 vi.mock('react-native', () => ({
