@@ -1,19 +1,25 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.0.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
   "files": {
-    "include": ["src/**/*", "tests/**/*", "*.ts", "*.tsx", "*.js", "*.jsx"],
-    "ignore": ["node_modules", "dist", "build", ".expo"]
+    "includes": [
+      "**/src/**/*",
+      "**/tests/**/*",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/build",
+      "!**/.expo"
+    ]
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
-      "nursery": {
-        "all": true
-      },
+      "nursery": {},
       "style": {
         "noNonNullAssertion": "off"
       },
