@@ -1,13 +1,12 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type {
-  HistoryServiceContract,
-  SessionHistory,
-  DailyAggregate,
-  WeeklyStats,
-} from '@/types/session-history';
-
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 // This will fail until implementation exists
 import { HistoryService } from '@/services/history-service';
+import type {
+  DailyAggregate,
+  HistoryServiceContract,
+  SessionHistory,
+  WeeklyStats,
+} from '@/types/session-history';
 
 describe('HistoryService Contract Tests', () => {
   let historyService: HistoryServiceContract;

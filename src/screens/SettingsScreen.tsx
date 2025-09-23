@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
+  Alert,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
   Switch,
+  Text,
   TouchableOpacity,
-  Alert,
+  View,
 } from 'react-native';
 
 import { SettingsService } from '@/services/settings-service';
-import type { UserSettings, Theme } from '@/types/user-settings';
+import type { Theme, UserSettings } from '@/types/user-settings';
 
 export function SettingsScreen() {
   const [settings, setSettings] = useState<UserSettings>({

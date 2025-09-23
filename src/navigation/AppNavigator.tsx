@@ -1,11 +1,10 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, View, StyleSheet } from 'react-native';
-
-import TimerScreen from '@/screens/TimerScreen';
-import SettingsScreen from '@/screens/SettingsScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import HistoryScreen from '@/screens/HistoryScreen';
+import SettingsScreen from '@/screens/SettingsScreen';
+import TimerScreen from '@/screens/TimerScreen';
 
 export type RootTabParamList = {
   Timer: undefined;

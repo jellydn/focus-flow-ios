@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import { StatusBar } from 'expo-status-bar';
+import React, { useEffect } from 'react';
+import { Alert } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import AppNavigator from '@/navigation/AppNavigator';
-import { NotificationService } from '@/services/notification-service';
 import { AppStateService } from '@/services/app-state-service';
+import { NotificationService } from '@/services/notification-service';
 
 // Configure notifications globally
 Notifications.setNotificationHandler({

@@ -1,6 +1,6 @@
 import { createStore } from '@xstate/store';
-import type { TimerSession, SessionType } from '@/types/timer-session';
 import type { PomodorocoCycle } from '@/types/pomodoro-cycle';
+import type { SessionType, TimerSession } from '@/types/timer-session';
 import type { UserSettings } from '@/types/user-settings';
 
 export interface AppState {

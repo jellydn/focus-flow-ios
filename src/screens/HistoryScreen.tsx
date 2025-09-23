@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
+  Alert,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-  Alert,
+  View,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 
 import { HistoryService } from '@/services/history-service';
-import type { SessionHistory, WeeklyStats, DailyAggregate } from '@/types/session-history';
+import type { DailyAggregate, SessionHistory, WeeklyStats } from '@/types/session-history';
 
 export function HistoryScreen() {
   const [todayHistory, setTodayHistory] = useState<SessionHistory | null>(null);
@@ -69,7 +69,7 @@ export function HistoryScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadHistoryData();
-    }, [loadHistoryData])
+    }, [loadHistoryData]),
   );
 
   const formatDuration = (seconds: number): string => {

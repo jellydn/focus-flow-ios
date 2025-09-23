@@ -1,5 +1,5 @@
-import { createMachine, assign, interpret } from 'xstate';
-import type { TimerSession, SessionType, SessionStatus } from '@/types/timer-session';
+import { assign, createMachine, interpret } from 'xstate';
+import type { SessionStatus, SessionType, TimerSession } from '@/types/timer-session';
 
 interface TimerContext {
   sessionType: SessionType | null;

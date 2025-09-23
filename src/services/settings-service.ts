@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { UserSettings, SettingsServiceContract, Theme } from '@/types/user-settings';
+import type { SettingsServiceContract, Theme, UserSettings } from '@/types/user-settings';
 import { DEFAULT_SETTINGS, TIMER_DURATIONS } from '@/types/user-settings';
 
 const STORAGE_KEY = '@focusflow:settings';

@@ -1,9 +1,9 @@
 import { nanoid } from 'nanoid';
 import type {
-  TimerSession,
-  SessionType,
   SessionStatus,
+  SessionType,
   TimerServiceContract,
+  TimerSession,
 } from '@/types/timer-session';
 
 export class TimerService implements TimerServiceContract {

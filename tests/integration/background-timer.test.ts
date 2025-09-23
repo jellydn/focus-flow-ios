@@ -1,9 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AppStateService } from '@/services/app-state-service';
+import { BackgroundTimerService } from '@/services/background-timer';
 // This will fail until implementation exists
 import { TimerService } from '@/services/timer-service';
-import { BackgroundTimerService } from '@/services/background-timer';
-import { AppStateService } from '@/services/app-state-service';
 
 describe('Background Timer Recovery Integration Tests', () => {
   let timerService: any;

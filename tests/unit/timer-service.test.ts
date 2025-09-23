@@ -1,8 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type { TimerServiceContract, TimerSession } from '@/types/timer-session';
-
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 // This will fail until implementation exists
 import { TimerService } from '@/services/timer-service';
+import type { TimerServiceContract, TimerSession } from '@/types/timer-session';
 
 describe('TimerService Contract Tests', () => {
   let timerService: TimerServiceContract;

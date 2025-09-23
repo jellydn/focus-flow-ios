@@ -1,8 +1,8 @@
-import { createMachine, assign, interpret } from 'xstate';
 import { nanoid } from 'nanoid';
-import type { SessionType } from '@/types/timer-session';
-import type { PomodorocoCycle, CycleProgress } from '@/types/pomodoro-cycle';
+import { assign, createMachine, interpret } from 'xstate';
+import type { CycleProgress, PomodorocoCycle } from '@/types/pomodoro-cycle';
 import { CYCLE_WORKFLOW } from '@/types/pomodoro-cycle';
+import type { SessionType } from '@/types/timer-session';
 
 interface CycleContext {
   cycleId: string | null;
@@ -80,7 +80,7 @@ export const cycleMachine = createMachine({
               return context; // Don't update if types don't match
             }
 
-            let updatedContext = { ...context };
+            const updatedContext = { ...context };
 
             // Record session based on type
             switch (sessionType) {

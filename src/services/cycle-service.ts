@@ -1,11 +1,7 @@
 import { nanoid } from 'nanoid';
-import type {
-  PomodorocoCycle,
-  CycleProgress,
-  CycleServiceContract,
-} from '@/types/pomodoro-cycle';
-import type { SessionType } from '@/types/timer-session';
+import type { CycleProgress, CycleServiceContract, PomodorocoCycle } from '@/types/pomodoro-cycle';
 import { CYCLE_WORKFLOW } from '@/types/pomodoro-cycle';
+import type { SessionType } from '@/types/timer-session';
 
 export class CycleService implements CycleServiceContract {
   private currentCycle: PomodorocoCycle | null = null;

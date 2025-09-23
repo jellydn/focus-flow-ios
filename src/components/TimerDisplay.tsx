@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import type { SessionType } from '@/types/timer-session';
 
 interface TimerDisplayProps {

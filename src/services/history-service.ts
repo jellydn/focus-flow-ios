@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nanoid } from 'nanoid';
 import type {
-  SessionHistory,
   DailyAggregate,
-  WeeklyStats,
   HistoryServiceContract,
+  SessionHistory,
+  WeeklyStats,
 } from '@/types/session-history';
 import type { SessionType } from '@/types/timer-session';
 
@@ -159,7 +159,7 @@ export class HistoryService implements HistoryServiceContract {
 
       let streak = 0;
       const today = this.getTodayDateString();
-      let checkDate = new Date(today);
+      const checkDate = new Date(today);
 
       for (const history of sortedHistory) {
         const historyDate = checkDate.toISOString().split('T')[0];

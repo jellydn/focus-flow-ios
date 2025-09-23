@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // This will fail until implementation exists
 import { NotificationService } from '@/services/notification-service';
-import { TimerService } from '@/services/timer-service';
 import { SettingsService } from '@/services/settings-service';
+import { TimerService } from '@/services/timer-service';
 
 describe('Notification Scheduling Integration Tests', () => {
   let notificationService: any;

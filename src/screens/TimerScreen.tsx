@@ -1,19 +1,16 @@
-import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-
-import TimerDisplay from '@/components/TimerDisplay';
-import TimerControls from '@/components/TimerControls';
-import ProgressRing from '@/components/ProgressRing';
+import React, { useCallback, useState } from 'react';
+import { Alert, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import CycleProgress from '@/components/CycleProgress';
-
-import { TimerService } from '@/services/timer-service';
+import ProgressRing from '@/components/ProgressRing';
+import TimerControls from '@/components/TimerControls';
+import TimerDisplay from '@/components/TimerDisplay';
 import { CycleService } from '@/services/cycle-service';
-import { SettingsService } from '@/services/settings-service';
 import { NotificationService } from '@/services/notification-service';
-
-import type { TimerSession, SessionType, SessionStatus } from '@/types/timer-session';
+import { SettingsService } from '@/services/settings-service';
+import { TimerService } from '@/services/timer-service';
 import type { CycleProgress as CycleProgressType } from '@/types/pomodoro-cycle';
+import type { SessionStatus, SessionType, TimerSession } from '@/types/timer-session';
 
 export function TimerScreen() {
   const [currentSession, setCurrentSession] = useState<TimerSession | null>(null);
@@ -226,7 +223,7 @@ export function TimerScreen() {
   useFocusEffect(
     useCallback(() => {
       initializeServices();
-    }, [initializeServices])
+    }, [initializeServices]),
   );
 
   if (isLoading) {

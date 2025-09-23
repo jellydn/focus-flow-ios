@@ -1,8 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type { SettingsServiceContract, UserSettings } from '@/types/user-settings';
-
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 // This will fail until implementation exists
 import { SettingsService } from '@/services/settings-service';
+import type { SettingsServiceContract, UserSettings } from '@/types/user-settings';
 
 describe('SettingsService Contract Tests', () => {
   let settingsService: SettingsServiceContract;

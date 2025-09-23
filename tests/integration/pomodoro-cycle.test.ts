@@ -1,10 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-
-// This will fail until implementation exists
-import { TimerService } from '@/services/timer-service';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CycleService } from '@/services/cycle-service';
 import { HistoryService } from '@/services/history-service';
 import { SettingsService } from '@/services/settings-service';
+// This will fail until implementation exists
+import { TimerService } from '@/services/timer-service';
 
 describe('Complete Pomodoro Cycle Integration Tests', () => {
   let timerService: any;

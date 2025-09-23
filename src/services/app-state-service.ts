@@ -1,9 +1,7 @@
-import { AppState, AppStateStatus } from 'react-native';
+import { AppState, type AppStateStatus } from 'react-native';
 import type { TimerSession } from '@/types/timer-session';
 
-interface AppStateChangeCallback {
-  (state: AppStateStatus): void;
-}
+type AppStateChangeCallback = (state: AppStateStatus) => void;
 
 export class AppStateService {
   private currentState: AppStateStatus = 'active';
