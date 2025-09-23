@@ -85,6 +85,10 @@ export function TimerScreen() {
       setCurrentSession(session);
     });
 
+    timerService.onSessionTick((remainingTime: number) => {
+      setCurrentSession((prev) => (prev ? { ...prev, remainingTime } : null));
+    });
+
     timerService.onSessionComplete((session: TimerSession) => {
       handleSessionComplete(session);
     });
