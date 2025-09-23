@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi, type MockedFunction } from 'vitest';
+import { beforeEach, describe, expect, it, type MockedFunction, vi } from 'vitest';
 
 // This will fail until implementation exists
 import { NotificationService } from '@/services/notification-service';
@@ -40,7 +40,11 @@ describe('Notification Scheduling Integration Tests', () => {
 
     it('should handle denied permissions gracefully', async () => {
       // Mock denied permissions
-      (notificationService.getPermissions as MockedFunction<typeof notificationService.getPermissions>).mockResolvedValue({
+      (
+        notificationService.getPermissions as MockedFunction<
+          typeof notificationService.getPermissions
+        >
+      ).mockResolvedValue({
         status: 'denied',
         canAskAgain: false,
       });
@@ -325,9 +329,11 @@ describe('Notification Scheduling Integration Tests', () => {
   describe('Error Handling', () => {
     it('should handle notification scheduling failures gracefully', async () => {
       // Mock notification scheduling failure
-      (notificationService.scheduleNotificationAsync as MockedFunction<typeof notificationService.scheduleNotificationAsync>).mockRejectedValue(
-        new Error('Notification scheduling failed'),
-      );
+      (
+        notificationService.scheduleNotificationAsync as MockedFunction<
+          typeof notificationService.scheduleNotificationAsync
+        >
+      ).mockRejectedValue(new Error('Notification scheduling failed'));
 
       const session = await timerService.startSession('work', 1500);
 
@@ -340,7 +346,11 @@ describe('Notification Scheduling Integration Tests', () => {
 
     it('should handle permission changes during app lifecycle', async () => {
       // Start with permissions granted
-      (notificationService.getPermissions as MockedFunction<typeof notificationService.getPermissions>).mockResolvedValue({
+      (
+        notificationService.getPermissions as MockedFunction<
+          typeof notificationService.getPermissions
+        >
+      ).mockResolvedValue({
         status: 'granted',
       });
 
@@ -348,7 +358,11 @@ describe('Notification Scheduling Integration Tests', () => {
       await notificationService.scheduleSessionCompletion(session);
 
       // Permissions revoked while app running
-      (notificationService.getPermissions as MockedFunction<typeof notificationService.getPermissions>).mockResolvedValue({
+      (
+        notificationService.getPermissions as MockedFunction<
+          typeof notificationService.getPermissions
+        >
+      ).mockResolvedValue({
         status: 'denied',
       });
 

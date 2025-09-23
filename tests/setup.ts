@@ -7,11 +7,11 @@ global.__DEV__ = true;
 
 // Setup DOM environment with proper window implementation
 const mockLocalStorage = {
-  getItem: vi.fn().mockImplementation((key: string) => null),
-  setItem: vi.fn().mockImplementation((key: string, value: string) => {}),
-  removeItem: vi.fn().mockImplementation((key: string) => {}),
+  getItem: vi.fn().mockImplementation((_key: string) => null),
+  setItem: vi.fn().mockImplementation((_key: string, _value: string) => {}),
+  removeItem: vi.fn().mockImplementation((_key: string) => {}),
   clear: vi.fn().mockImplementation(() => {}),
-  key: vi.fn().mockImplementation((index: number) => null),
+  key: vi.fn().mockImplementation((_index: number) => null),
   length: 0,
 };
 

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { beforeEach, describe, expect, it, vi, type MockedFunction } from 'vitest';
+import { beforeEach, describe, expect, it, type MockedFunction, vi } from 'vitest';
 
 // This will fail until implementation exists
 import { SettingsService } from '@/services/settings-service';
@@ -172,7 +172,9 @@ describe('Settings Persistence Integration Tests', () => {
   describe('Storage Error Handling', () => {
     it('should handle AsyncStorage write failures gracefully', async () => {
       // Mock AsyncStorage failure
-      (AsyncStorage.setItem as MockedFunction<typeof AsyncStorage.setItem>).mockRejectedValue(new Error('Storage quota exceeded'));
+      (AsyncStorage.setItem as MockedFunction<typeof AsyncStorage.setItem>).mockRejectedValue(
+        new Error('Storage quota exceeded'),
+      );
 
       // Should not throw error
       await expect(settingsService.updateSettings({ theme: 'dark' })).resolves.not.toThrow();
@@ -187,7 +189,9 @@ describe('Settings Persistence Integration Tests', () => {
 
     it('should handle AsyncStorage read failures gracefully', async () => {
       // Mock AsyncStorage read failure
-      (AsyncStorage.getItem as MockedFunction<typeof AsyncStorage.getItem>).mockRejectedValue(new Error('Storage read failed'));
+      (AsyncStorage.getItem as MockedFunction<typeof AsyncStorage.getItem>).mockRejectedValue(
+        new Error('Storage read failed'),
+      );
 
       const newSettingsService = new SettingsService();
       const settings = await newSettingsService.getSettings();
@@ -202,13 +206,15 @@ describe('Settings Persistence Integration Tests', () => {
 
     it('should retry failed storage operations', async () => {
       let attemptCount = 0;
-      (AsyncStorage.setItem as MockedFunction<typeof AsyncStorage.setItem>).mockImplementation(() => {
-        attemptCount++;
-        if (attemptCount < 3) {
-          return Promise.reject(new Error('Temporary failure'));
-        }
-        return Promise.resolve();
-      });
+      (AsyncStorage.setItem as MockedFunction<typeof AsyncStorage.setItem>).mockImplementation(
+        () => {
+          attemptCount++;
+          if (attemptCount < 3) {
+            return Promise.reject(new Error('Temporary failure'));
+          }
+          return Promise.resolve();
+        },
+      );
 
       await settingsService.updateSettings({ theme: 'dark' });
 
@@ -284,7 +290,8 @@ describe('Settings Persistence Integration Tests', () => {
       ]);
 
       // Should have fewer storage writes than updates (due to debouncing)
-      const setItemCalls = (AsyncStorage.setItem as MockedFunction<typeof AsyncStorage.setItem>).mock.calls.length;
+      const setItemCalls = (AsyncStorage.setItem as MockedFunction<typeof AsyncStorage.setItem>)
+        .mock.calls.length;
       expect(setItemCalls).toBeLessThan(3);
     });
 
@@ -319,7 +326,9 @@ describe('Settings Persistence Integration Tests', () => {
       settingsService.onSettingsChange(changeCallback);
 
       // Mock storage failure
-      (AsyncStorage.setItem as MockedFunction<typeof AsyncStorage.setItem>).mockRejectedValue(new Error('Failed'));
+      (AsyncStorage.setItem as MockedFunction<typeof AsyncStorage.setItem>).mockRejectedValue(
+        new Error('Failed'),
+      );
 
       await settingsService.updateSettings({ theme: 'dark' });
 
