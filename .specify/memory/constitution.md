@@ -1,50 +1,60 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+SYNC IMPACT REPORT - Constitution Update
+Version change: [NEW] → 1.0.0
+Added sections:
+- Core Principles (5 principles based on best practices)
+- Code Quality Standards
+- Development Workflow
+- Governance structure
+
+Templates requiring updates:
+✅ plan-template.md - Constitution Check references intact
+✅ spec-template.md - No constitutional constraints needed
+✅ tasks-template.md - TDD requirements align with principles
+✅ commands/*.md - No agent-specific references to update
+
+Follow-up TODOs: None - all placeholders resolved
+-->
+
+# Focus Flow iOS Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Tidy First Philosophy
+Code changes must be made through small, safe steps following Kent Beck's "Tidy First" approach. Make tidying changes before adding features when possible. Eliminate complexity rather than manage it. Use guard clauses to simplify conditional logic and create helper variables for complex expressions.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+**Rationale**: Maintains code readability and reduces cognitive load for future developers working on focus/productivity features.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Test-First Development (NON-NEGOTIABLE)
+TDD mandatory: Tests written → User approved → Tests fail → Then implement. Red-Green-Refactor cycle strictly enforced. Focus on integration and end-to-end tests following the "Testing Trophy" approach. Prioritize user-facing functionality testing over isolated unit tests.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**Rationale**: Critical for iOS productivity apps where user experience reliability directly impacts user focus and workflow.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Human-Centered Communication
+Code is written for human communication first, machine execution second. Write clear commit messages, use descriptive variable names, and treat code reviews as knowledge sharing sessions. Optimize for maintainability and future flexibility.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Rationale**: "Software design is an exercise in human relationships" - ensures sustainable development as the focus app evolves.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Performance-First Design
+Optimize for user-centric metrics including app launch time, UI responsiveness, and battery efficiency. Use progressive enhancement and lazy loading. Measure before optimizing. Target <200ms response times for user interactions.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**Rationale**: Focus apps require minimal friction to be effective - any performance lag breaks user concentration.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Dependency Discipline
+Choose well-maintained libraries with active GitHub repositories, comprehensive documentation, and strong community support. Evaluate alternatives before adding new dependencies. Prefer Swift-native solutions when performance or battery life is critical.
+
+**Rationale**: iOS ecosystem evolves rapidly; stable dependencies ensure long-term app viability and App Store compliance.
+
+## Code Quality Standards
+
+All code must prioritize readability and maintainability. Use Swift best practices including optionals handling, protocol-oriented programming, and memory management. Implement comprehensive error handling and logging for debugging production issues.
+
+## Development Workflow
+
+Follow iOS development best practices including proper MVC/MVVM architecture, Interface Builder usage, and Core Data integration patterns. Use SwiftUI for new components when targeting iOS 15+. Maintain backwards compatibility requirements based on target user base.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+Constitution supersedes all other development practices. All PRs must verify compliance with these principles. Complexity deviations must be explicitly justified with rationale. Use agent-specific guidance files (CLAUDE.md, AGENTS.md) for runtime development context that supplements but never overrides constitutional requirements.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2025-09-23 | **Last Amended**: 2025-09-23
