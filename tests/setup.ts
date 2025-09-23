@@ -1,27 +1,37 @@
-// Vitest setup file for React Native testing
-import { vi } from 'vitest';
+// Setup DOM window IMMEDIATELY - must be first to prevent AsyncStorage errors
+const mockStorageSync = {
+  getItem: (key: string) => null,
+  setItem: (key: string, value: string) => {},
+  removeItem: (key: string) => {},
+  clear: () => {},
+  key: (index: number) => null,
+  length: 0,
+};
+
+// Create comprehensive window object with localStorage before ANY imports
+(global as any).window = {
+  localStorage: mockStorageSync,
+  sessionStorage: mockStorageSync,
+  location: { href: 'http://localhost:3000' },
+  navigator: { userAgent: 'jsdom' },
+  document: {
+    createElement: () => ({}),
+    documentElement: {},
+  },
+  console: global.console,
+};
+
+// Set globals on globalThis for complete compatibility
+(globalThis as any).window = (global as any).window;
+(globalThis as any).localStorage = mockStorageSync;
+(global as any).localStorage = mockStorageSync;
 
 // React Native environment globals
 global.__DEV__ = true;
 (globalThis as any).__DEV__ = true;
 
-// Setup DOM environment with proper window implementation
-const mockLocalStorage = {
-  getItem: vi.fn().mockImplementation((_key: string) => null),
-  setItem: vi.fn().mockImplementation((_key: string, _value: string) => {}),
-  removeItem: vi.fn().mockImplementation((_key: string) => {}),
-  clear: vi.fn().mockImplementation(() => {}),
-  key: vi.fn().mockImplementation((_index: number) => null),
-  length: 0,
-};
-
-// Set up window globally before any imports happen
-(global as any).window = {
-  localStorage: mockLocalStorage,
-};
-
-// Also ensure it's available as a direct global
-(global as any).localStorage = mockLocalStorage;
+// Import Vitest AFTER setting up all globals
+import { vi } from 'vitest';
 
 // Mock React Native modules
 vi.mock('react-native', () => ({
@@ -44,18 +54,29 @@ vi.mock('react-native', () => ({
   },
 }));
 
-// Mock AsyncStorage with proper implementation
+// Create a comprehensive AsyncStorage mock that doesn't rely on window
 const mockAsyncStorage = {
-  getItem: vi.fn(() => Promise.resolve(null)),
-  setItem: vi.fn(() => Promise.resolve()),
-  removeItem: vi.fn(() => Promise.resolve()),
+  getItem: vi.fn((key: string) => Promise.resolve(null)),
+  setItem: vi.fn((key: string, value: string) => Promise.resolve()),
+  removeItem: vi.fn((key: string) => Promise.resolve()),
   clear: vi.fn(() => Promise.resolve()),
   getAllKeys: vi.fn(() => Promise.resolve([])),
-  multiGet: vi.fn(() => Promise.resolve([])),
-  multiSet: vi.fn(() => Promise.resolve()),
+  multiGet: vi.fn((keys: string[]) => Promise.resolve([])),
+  multiSet: vi.fn((keyValuePairs: [string, string][]) => Promise.resolve()),
+  mergeItem: vi.fn((key: string, value: string) => Promise.resolve()),
+  multiMerge: vi.fn((keyValuePairs: [string, string][]) => Promise.resolve()),
+  multiRemove: vi.fn((keys: string[]) => Promise.resolve()),
+  flushGetRequests: vi.fn(() => Promise.resolve()),
 };
 
-vi.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
+// Mock the AsyncStorage module completely to prevent window access
+vi.mock('@react-native-async-storage/async-storage', () => ({
+  default: mockAsyncStorage,
+  __esModule: true,
+}), { hoisted: true });
+
+// Also create a backup mock for any direct imports
+(global as any).AsyncStorage = mockAsyncStorage;
 
 // Mock Expo modules
 vi.mock('expo-notifications', () => ({

@@ -1,7 +1,36 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it, type MockedFunction, vi } from 'vitest';
 
-// This will fail until implementation exists
+// Create a stateful mock storage to simulate actual persistence
+const mockStorage = new Map<string, string>();
+
+// Mock AsyncStorage BEFORE importing any modules
+vi.mock('@react-native-async-storage/async-storage', () => ({
+  default: {
+    getItem: vi.fn((key: string) => Promise.resolve(mockStorage.get(key) || null)),
+    setItem: vi.fn((key: string, value: string) => {
+      mockStorage.set(key, value);
+      return Promise.resolve();
+    }),
+    removeItem: vi.fn((key: string) => {
+      mockStorage.delete(key);
+      return Promise.resolve();
+    }),
+    clear: vi.fn(() => {
+      mockStorage.clear();
+      return Promise.resolve();
+    }),
+    getAllKeys: vi.fn(() => Promise.resolve(Array.from(mockStorage.keys()))),
+    multiGet: vi.fn(() => Promise.resolve([])),
+    multiSet: vi.fn(() => Promise.resolve()),
+    mergeItem: vi.fn(() => Promise.resolve()),
+    multiMerge: vi.fn(() => Promise.resolve()),
+    multiRemove: vi.fn(() => Promise.resolve()),
+    flushGetRequests: vi.fn(() => Promise.resolve()),
+  },
+}));
+
+// Import after mocking
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SettingsService } from '@/services/settings-service';
 
 describe('Settings Persistence Integration Tests', () => {
@@ -9,7 +38,7 @@ describe('Settings Persistence Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    AsyncStorage.clear();
+    mockStorage.clear(); // Clear mock storage between tests
     settingsService = new SettingsService();
   });
 

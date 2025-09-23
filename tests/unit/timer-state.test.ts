@@ -7,7 +7,7 @@ describe('Timer State Machine Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset store to initial state
-    timerStore.send('stopSession');
+    timerStore.send({ type: 'stopSession' });
   });
 
   describe('Timer States', () => {
@@ -17,21 +17,19 @@ describe('Timer State Machine Tests', () => {
     });
 
     it('should transition to running when starting session', () => {
-      console.log('Before startSession:', timerStore.getSnapshot().context);
-      timerStore.send('startSession', { sessionType: 'work', duration: 1500 });
+      timerStore.send({ type: 'startSession', sessionType: 'work', duration: 1500 });
       const snapshot = timerStore.getSnapshot();
-      console.log('After startSession:', snapshot.context);
       expect(timerHelpers.getSessionStatus(snapshot.context)).toBe('running');
     });
 
     it('should pause and resume correctly', () => {
-      timerStore.send('startSession', { sessionType: 'work', duration: 1500 });
-      timerStore.send('pauseSession');
+      timerStore.send({ type: 'startSession', sessionType: 'work', duration: 1500 });
+      timerStore.send({ type: 'pauseSession' });
 
       let snapshot = timerStore.getSnapshot();
       expect(timerHelpers.getSessionStatus(snapshot.context)).toBe('paused');
 
-      timerStore.send('resumeSession');
+      timerStore.send({ type: 'resumeSession' });
       snapshot = timerStore.getSnapshot();
       expect(timerHelpers.getSessionStatus(snapshot.context)).toBe('running');
     });

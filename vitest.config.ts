@@ -1,4 +1,5 @@
 /// <reference types="vitest" />
+import path from 'path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -11,6 +12,7 @@ export default defineConfig({
     environmentOptions: {
       jsdom: {
         url: 'http://localhost:3000',
+        resources: 'usable',
       },
     },
     coverage: {
@@ -28,7 +30,12 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': './src',
+      '@': path.resolve(__dirname, 'src'),
     },
+  },
+  define: {
+    __DEV__: true,
+    'global.__DEV__': true,
+    'globalThis.__DEV__': true,
   },
 });
