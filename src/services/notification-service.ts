@@ -1,4 +1,5 @@
 import * as Notifications from 'expo-notifications';
+import { SchedulableTriggerInputTypes } from 'expo-notifications';
 import type { TimerSession } from '@/types/timer-session';
 import type { UserSettings } from '@/types/user-settings';
 
@@ -97,7 +98,11 @@ export class NotificationService {
       await Notifications.scheduleNotificationAsync({
         identifier: `session-${session.id}`,
         content,
-        trigger: { date: scheduledTime },
+        trigger: {
+          type: SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: session.remainingTime,
+          repeats: false,
+        },
       });
 
       console.log(`Notification scheduled for ${scheduledTime.toISOString()}`);

@@ -1,4 +1,4 @@
-import { createStore, from } from '@xstate/store';
+import { createStore } from '@xstate/store';
 import type { SessionType } from '@/types/timer-session';
 
 export interface TimerState {
@@ -25,61 +25,64 @@ const initialState: TimerState = {
   status: 'idle',
 };
 
-export const timerStore = from(initialState, {
-  startSession: (
-    state: TimerState,
-    event: { sessionType: SessionType; duration: number; cyclePosition?: number },
-  ) => ({
-    ...state,
-    sessionType: event.sessionType,
-    duration: event.duration,
-    remainingTime: event.duration,
-    cyclePosition: event.cyclePosition || 0,
-    startedAt: new Date(),
-    completedAt: null,
-    pausedAt: null,
-    resumedAt: null,
-    status: 'running',
-  }),
+export const timerStore = createStore({
+  context: initialState,
+  on: {
+    startSession: (
+      context: TimerState,
+      event: { sessionType: SessionType; duration: number; cyclePosition?: number },
+    ) => ({
+      ...context,
+      sessionType: event.sessionType,
+      duration: event.duration,
+      remainingTime: event.duration,
+      cyclePosition: event.cyclePosition || 0,
+      startedAt: new Date(),
+      completedAt: null,
+      pausedAt: null,
+      resumedAt: null,
+      status: 'running' as const,
+    }),
 
-  pauseSession: (state: TimerState) => ({
-    ...state,
-    pausedAt: new Date(),
-    status: 'paused',
-  }),
+    pauseSession: (context: TimerState) => ({
+      ...context,
+      pausedAt: new Date(),
+      status: 'paused' as const,
+    }),
 
-  resumeSession: (state: TimerState) => ({
-    ...state,
-    resumedAt: new Date(),
-    pausedAt: null,
-    status: 'running',
-  }),
+    resumeSession: (context: TimerState) => ({
+      ...context,
+      resumedAt: new Date(),
+      pausedAt: null,
+      status: 'running' as const,
+    }),
 
-  stopSession: () => ({
-    ...initialState,
-    status: 'idle',
-  }),
+    stopSession: () => ({
+      ...initialState,
+      status: 'idle' as const,
+    }),
 
-  resetSession: (state: TimerState) => ({
-    ...state,
-    remainingTime: state.duration,
-    completedAt: null,
-    pausedAt: null,
-    resumedAt: null,
-    status: 'idle',
-  }),
+    resetSession: (context: TimerState) => ({
+      ...context,
+      remainingTime: context.duration,
+      completedAt: null,
+      pausedAt: null,
+      resumedAt: null,
+      status: 'idle' as const,
+    }),
 
-  tick: (state: TimerState, event: { remainingTime: number }) => ({
-    ...state,
-    remainingTime: event.remainingTime,
-  }),
+    tick: (context: TimerState, event: { remainingTime: number }) => ({
+      ...context,
+      remainingTime: event.remainingTime,
+    }),
 
-  completeSession: (state: TimerState) => ({
-    ...state,
-    completedAt: new Date(),
-    remainingTime: 0,
-    status: 'completed',
-  }),
+    completeSession: (context: TimerState) => ({
+      ...context,
+      completedAt: new Date(),
+      remainingTime: 0,
+      status: 'completed' as const,
+    }),
+  },
 });
 
 // Helper functions

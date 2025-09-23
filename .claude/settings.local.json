@@ -20,7 +20,9 @@
       "Bash(bun run:*)",
       "Bash(npx expo start:*)",
       "Bash(bun start:*)",
-      "Bash(make:*)"
+      "Bash(make:*)",
+      "mcp__context7__get-library-docs",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

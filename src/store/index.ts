@@ -1,4 +1,4 @@
-import { createStore, from } from '@xstate/store';
+import { createStore } from '@xstate/store';
 import type { PomodorocoCycle } from '@/types/pomodoro-cycle';
 import type { TimerSession } from '@/types/timer-session';
 import type { UserSettings } from '@/types/user-settings';
@@ -43,114 +43,133 @@ export const initialState: AppState = {
   },
 };
 
-export const appStore = from(initialState, {
-  // Timer events
-  startSession: {
-    timer: (context: AppState, event: { session: TimerSession }) => ({
-      ...context.timer,
-      session: event.session,
-      isRunning: true,
-      isPaused: false,
+export const appStore = createStore({
+  context: initialState,
+  on: {
+    // Timer events
+    startSession: (context: AppState, event: { session: TimerSession }) => ({
+      ...context,
+      timer: {
+        ...context.timer,
+        session: event.session,
+        isRunning: true,
+        isPaused: false,
+      },
     }),
-  },
 
-  pauseSession: {
-    timer: (context: AppState) => ({
-      ...context.timer,
-      isRunning: false,
-      isPaused: true,
+    pauseSession: (context: AppState) => ({
+      ...context,
+      timer: {
+        ...context.timer,
+        isRunning: false,
+        isPaused: true,
+      },
     }),
-  },
 
-  resumeSession: {
-    timer: (context: AppState) => ({
-      ...context.timer,
-      isRunning: true,
-      isPaused: false,
+    resumeSession: (context: AppState) => ({
+      ...context,
+      timer: {
+        ...context.timer,
+        isRunning: true,
+        isPaused: false,
+      },
     }),
-  },
 
-  stopSession: {
-    timer: (context: AppState) => ({
-      ...context.timer,
-      session: null,
-      isRunning: false,
-      isPaused: false,
+    stopSession: (context: AppState) => ({
+      ...context,
+      timer: {
+        ...context.timer,
+        session: null,
+        isRunning: false,
+        isPaused: false,
+      },
     }),
-  },
 
-  updateSessionTime: {
-    timer: (context: AppState, event: { remainingTime: number }) => ({
-      ...context.timer,
-      session: context.timer.session
-        ? { ...context.timer.session, remainingTime: event.remainingTime }
-        : null,
+    updateSessionTime: (context: AppState, event: { remainingTime: number }) => ({
+      ...context,
+      timer: {
+        ...context.timer,
+        session: context.timer.session
+          ? { ...context.timer.session, remainingTime: event.remainingTime }
+          : null,
+      },
     }),
-  },
 
-  completeSession: {
-    timer: (context: AppState, event: { completedSession: TimerSession }) => ({
-      ...context.timer,
-      session: event.completedSession,
-      isRunning: false,
-      isPaused: false,
+    completeSession: (context: AppState, event: { completedSession: TimerSession }) => ({
+      ...context,
+      timer: {
+        ...context.timer,
+        session: event.completedSession,
+        isRunning: false,
+        isPaused: false,
+      },
     }),
-  },
 
-  // Cycle events
-  startCycle: {
-    cycle: (context: AppState, event: { cycle: PomodorocoCycle }) => ({
-      ...context.cycle,
-      current: event.cycle,
-      position: 1,
+    // Cycle events
+    startCycle: (context: AppState, event: { cycle: PomodorocoCycle }) => ({
+      ...context,
+      cycle: {
+        ...context.cycle,
+        current: event.cycle,
+        position: 1,
+      },
     }),
-  },
 
-  updateCycleProgress: {
-    cycle: (context: AppState, event: { position: number; cycle: PomodorocoCycle }) => ({
-      ...context.cycle,
-      current: event.cycle,
-      position: event.position,
+    updateCycleProgress: (
+      context: AppState,
+      event: { position: number; cycle: PomodorocoCycle },
+    ) => ({
+      ...context,
+      cycle: {
+        ...context.cycle,
+        current: event.cycle,
+        position: event.position,
+      },
     }),
-  },
 
-  completeCycle: {
-    cycle: (context: AppState, event: { completedCycle: PomodorocoCycle }) => ({
-      ...context.cycle,
-      current: event.completedCycle,
+    completeCycle: (context: AppState, event: { completedCycle: PomodorocoCycle }) => ({
+      ...context,
+      cycle: {
+        ...context.cycle,
+        current: event.completedCycle,
+      },
     }),
-  },
 
-  resetCycle: {
-    cycle: () => ({
-      current: null,
-      position: 0,
-      totalPositions: 8,
+    resetCycle: (context: AppState) => ({
+      ...context,
+      cycle: {
+        current: null,
+        position: 0,
+        totalPositions: 8,
+      },
     }),
-  },
 
-  // Settings events
-  updateSettings: {
-    settings: (_context: AppState, event: { settings: UserSettings }) => event.settings,
-  },
-
-  // Background events
-  enterBackground: {
-    background: () => ({
-      isActive: true,
-      backgroundedAt: new Date(),
+    // Settings events
+    updateSettings: (context: AppState, event: { settings: UserSettings }) => ({
+      ...context,
+      settings: event.settings,
     }),
-  },
 
-  exitBackground: {
-    background: () => ({
-      isActive: false,
-      backgroundedAt: null,
+    // Background events
+    enterBackground: (context: AppState) => ({
+      ...context,
+      background: {
+        isActive: true,
+        backgroundedAt: new Date(),
+      },
     }),
-  },
 
-  // Hydrate from persistence
-  hydrate: (_context: AppState, event: { state: AppState }) => event.state,
+    exitBackground: (context: AppState) => ({
+      ...context,
+      background: {
+        isActive: false,
+        backgroundedAt: null,
+      },
+    }),
+
+    // Hydrate from persistence
+    hydrate: (_context: AppState, event: { state: AppState }) => event.state,
+  },
 });
 
 // Selectors

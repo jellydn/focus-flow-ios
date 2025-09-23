@@ -47,7 +47,7 @@ dev-tunnel: ## Start development server with tunnel
 	bun start --tunnel
 
 # Building
-build: type-check lint ## Run all quality checks
+build: type-check-src lint ## Run all quality checks for src
 	@echo "✅ All quality checks passed"
 
 build-web: ## Build for web production
@@ -96,9 +96,13 @@ format: ## Format code with biome
 	@echo "💅 Formatting code..."
 	bun run format
 
-type-check: ## Check TypeScript types
+type-check: ## Check TypeScript types (all files)
 	@echo "🔍 Checking TypeScript types..."
 	bun run type-check
+
+type-check-src: ## Check TypeScript types (src only)
+	@echo "🔍 Checking TypeScript types in src/..."
+	bunx tsc --noEmit --project tsconfig.src.json
 
 quality: lint type-check ## Run all quality checks
 	@echo "✅ All quality checks completed"

@@ -16,8 +16,17 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.focusflow.ios",
       "infoPlist": {
-        "UIBackgroundModes": ["background-fetch", "background-processing"],
-        "BGTaskSchedulerPermittedIdentifiers": ["com.focusflow.timer-background"]
+        "UIBackgroundModes": [
+          "background-fetch",
+          "background-processing",
+          "background-fetch",
+          "background-processing"
+        ],
+        "BGTaskSchedulerPermittedIdentifiers": [
+          "com.focusflow.timer-background",
+          "com.focusflow.timer-background"
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -28,7 +37,10 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.focusflow.android",
-      "permissions": ["VIBRATE", "WAKE_LOCK"]
+      "permissions": [
+        "VIBRATE",
+        "WAKE_LOCK"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -41,13 +53,20 @@
         {
           "icon": "./assets/notification-icon.png",
           "color": "#ffffff",
-          "sounds": ["./assets/notification.wav"]
+          "sounds": [
+            "./assets/notification.wav"
+          ]
         }
       ]
     ],
     "notification": {
       "icon": "./assets/notification-icon.png",
       "color": "#ffffff"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a4e3c4c0-7658-41f0-a980-eab3b2c1fa72"
+      }
     }
   }
 }

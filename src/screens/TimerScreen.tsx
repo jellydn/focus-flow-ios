@@ -33,19 +33,22 @@ export function TimerScreen() {
     }
   }, [cycleService]);
 
-  const getSessionCompleteMessage = (completed: SessionType, next: SessionType): string => {
-    if (completed === 'work') {
-      return next === 'longBreak'
-        ? "Excellent work! Time for a long break - you've earned it!"
-        : 'Great focus! Time for a short break.';
-    }
+  const getSessionCompleteMessage = useCallback(
+    (completed: SessionType, next: SessionType): string => {
+      if (completed === 'work') {
+        return next === 'longBreak'
+          ? "Excellent work! Time for a long break - you've earned it!"
+          : 'Great focus! Time for a short break.';
+      }
 
-    if (completed === 'longBreak') {
-      return "Refreshed and ready! Let's start a new Pomodoro cycle.";
-    }
+      if (completed === 'longBreak') {
+        return "Refreshed and ready! Let's start a new Pomodoro cycle.";
+      }
 
-    return 'Break time over! Ready to get back to work?';
-  };
+      return 'Break time over! Ready to get back to work?';
+    },
+    [],
+  );
 
   const handleSessionComplete = useCallback(
     async (session: TimerSession) => {
@@ -104,18 +107,21 @@ export function TimerScreen() {
     });
   }, [timerService, cycleService, handleSessionComplete, startNewCycle, updateNextSessionType]);
 
-  const getSessionDuration = (type: SessionType): number => {
-    switch (type) {
-      case 'work':
-        return settingsService.getWorkDuration();
-      case 'shortBreak':
-        return settingsService.getShortBreakDuration();
-      case 'longBreak':
-        return settingsService.getLongBreakDuration();
-      default:
-        return 1500;
-    }
-  };
+  const getSessionDuration = useCallback(
+    (type: SessionType): number => {
+      switch (type) {
+        case 'work':
+          return settingsService.getWorkDuration();
+        case 'shortBreak':
+          return settingsService.getShortBreakDuration();
+        case 'longBreak':
+          return settingsService.getLongBreakDuration();
+        default:
+          return 1500;
+      }
+    },
+    [settingsService],
+  );
 
   // Initialize services and load current state
   const initializeServices = useCallback(async () => {

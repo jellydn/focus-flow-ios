@@ -35,74 +35,80 @@ const initialState: CycleState = {
 };
 
 export const cycleStore = createStore({
-  startCycle: () => ({
-    cycleId: nanoid(),
-    currentPosition: 1,
-    totalPositions: 8,
-    workSessionsCompleted: 0,
-    shortBreaksCompleted: 0,
-    longBreakCompleted: false,
-    isComplete: false,
-    startedAt: new Date(),
-    completedAt: null,
-    workSessionIds: [],
-    shortBreakIds: [],
-    longBreakId: null,
-  }),
+  context: initialState,
+  on: {
+    startCycle: () => ({
+      cycleId: nanoid(),
+      currentPosition: 1,
+      totalPositions: 8,
+      workSessionsCompleted: 0,
+      shortBreaksCompleted: 0,
+      longBreakCompleted: false,
+      isComplete: false,
+      startedAt: new Date(),
+      completedAt: null,
+      workSessionIds: [],
+      shortBreakIds: [],
+      longBreakId: null,
+    }),
 
-  completeSession: (state: CycleState, event: { sessionType: SessionType; sessionId?: string }) => {
-    const sessionType = event.sessionType;
-    const sessionId = event.sessionId || nanoid();
+    completeSession: (
+      context: CycleState,
+      event: { sessionType: SessionType; sessionId?: string },
+    ) => {
+      const sessionType = event.sessionType;
+      const sessionId = event.sessionId || nanoid();
 
-    // Validate session type matches expected position
-    const expectedType = CYCLE_WORKFLOW[state.currentPosition - 1];
-    if (sessionType !== expectedType) {
-      console.warn(`Session type mismatch: expected ${expectedType}, got ${sessionType}`);
-      return state; // Don't update if types don't match
-    }
+      // Validate session type matches expected position
+      const expectedType = CYCLE_WORKFLOW[context.currentPosition - 1];
+      if (sessionType !== expectedType) {
+        console.warn(`Session type mismatch: expected ${expectedType}, got ${sessionType}`);
+        return context; // Don't update if types don't match
+      }
 
-    const updates: Partial<CycleState> = {};
+      const updates: Partial<CycleState> = {};
 
-    // Record session based on type
-    switch (sessionType) {
-      case 'work':
-        updates.workSessionsCompleted = state.workSessionsCompleted + 1;
-        updates.workSessionIds = [...state.workSessionIds, sessionId];
-        break;
-      case 'shortBreak':
-        updates.shortBreaksCompleted = state.shortBreaksCompleted + 1;
-        updates.shortBreakIds = [...state.shortBreakIds, sessionId];
-        break;
-      case 'longBreak':
-        updates.longBreakCompleted = true;
-        updates.longBreakId = sessionId;
-        break;
-    }
+      // Record session based on type
+      switch (sessionType) {
+        case 'work':
+          updates.workSessionsCompleted = context.workSessionsCompleted + 1;
+          updates.workSessionIds = [...context.workSessionIds, sessionId];
+          break;
+        case 'shortBreak':
+          updates.shortBreaksCompleted = context.shortBreaksCompleted + 1;
+          updates.shortBreakIds = [...context.shortBreakIds, sessionId];
+          break;
+        case 'longBreak':
+          updates.longBreakCompleted = true;
+          updates.longBreakId = sessionId;
+          break;
+      }
 
-    // Advance position
-    updates.currentPosition = Math.min(state.currentPosition + 1, 8);
+      // Advance position
+      updates.currentPosition = Math.min(context.currentPosition + 1, 8);
 
-    // Check if cycle is complete
-    if (
-      (updates.workSessionsCompleted || state.workSessionsCompleted) === 4 &&
-      (updates.shortBreaksCompleted || state.shortBreaksCompleted) === 3 &&
-      (updates.longBreakCompleted || state.longBreakCompleted)
-    ) {
-      updates.isComplete = true;
-    }
+      // Check if cycle is complete
+      if (
+        (updates.workSessionsCompleted || context.workSessionsCompleted) === 4 &&
+        (updates.shortBreaksCompleted || context.shortBreaksCompleted) === 3 &&
+        (updates.longBreakCompleted || context.longBreakCompleted)
+      ) {
+        updates.isComplete = true;
+      }
 
-    return { ...state, ...updates };
+      return { ...context, ...updates };
+    },
+
+    completeCycle: (context: CycleState) => ({
+      ...context,
+      completedAt: new Date(),
+      isComplete: true,
+    }),
+
+    abandonCycle: () => initialState,
+
+    resetCycle: () => initialState,
   },
-
-  completeCycle: (state: CycleState) => ({
-    ...state,
-    completedAt: new Date(),
-    isComplete: true,
-  }),
-
-  abandonCycle: () => initialState,
-
-  resetCycle: () => initialState,
 });
 
 // Helper functions

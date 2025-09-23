@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   SafeAreaView,
@@ -23,7 +23,7 @@ export function SettingsScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [settingsService] = useState(() => new SettingsService());
 
-  const loadSettings = async () => {
+  const loadSettings = useCallback(async () => {
     try {
       setIsLoading(true);
       const currentSettings = await settingsService.getSettings();
@@ -34,13 +34,13 @@ export function SettingsScreen() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [settingsService]);
 
-  const setupEventListeners = () => {
+  const setupEventListeners = useCallback(() => {
     settingsService.onSettingsChange((newSettings: UserSettings) => {
       setSettings(newSettings);
     });
-  };
+  }, [settingsService]);
 
   useEffect(() => {
     loadSettings();
