@@ -50,8 +50,7 @@ export const timerMachine = createMachine({
             resumedAt: undefined,
           })),
           cond: (context, event) =>
-            event.duration > 0 &&
-            ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
+            event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
         },
       },
     },
@@ -96,8 +95,7 @@ export const timerMachine = createMachine({
             resumedAt: undefined,
           })),
           cond: (context, event) =>
-            event.duration > 0 &&
-            ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
+            event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
         },
       },
     },
@@ -130,8 +128,7 @@ export const timerMachine = createMachine({
             resumedAt: undefined,
           })),
           cond: (context, event) =>
-            event.duration > 0 &&
-            ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
+            event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
         },
       },
     },
@@ -150,8 +147,7 @@ export const timerMachine = createMachine({
             resumedAt: undefined,
           })),
           cond: (context, event) =>
-            event.duration > 0 &&
-            ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
+            event.duration > 0 && ['work', 'shortBreak', 'longBreak'].includes(event.sessionType),
         },
         RESET: {
           target: 'idle',
@@ -172,7 +168,7 @@ export class TimerStateMachine {
 
     // Subscribe to state changes
     this.service.subscribe((state: any) => {
-      this.stateChangeCallbacks.forEach(callback => callback(state));
+      this.stateChangeCallbacks.forEach((callback) => callback(state));
     });
   }
 
@@ -201,7 +197,7 @@ export class TimerStateMachine {
 
     // Re-subscribe to state changes
     this.service.subscribe((state: any) => {
-      this.stateChangeCallbacks.forEach(callback => callback(state));
+      this.stateChangeCallbacks.forEach((callback) => callback(state));
     });
   }
 

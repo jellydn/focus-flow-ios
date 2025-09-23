@@ -48,9 +48,7 @@ describe('Notification Scheduling Integration Tests', () => {
       const session = await timerService.startSession('work', 1500);
 
       // Should not throw error when permissions denied
-      await expect(
-        notificationService.scheduleSessionCompletion(session)
-      ).resolves.not.toThrow();
+      await expect(notificationService.scheduleSessionCompletion(session)).resolves.not.toThrow();
 
       // Should gracefully skip notification scheduling
       const scheduledNotifications = await notificationService.getAllScheduledNotifications();
@@ -145,8 +143,8 @@ describe('Notification Scheduling Integration Tests', () => {
         await notificationService.scheduleSessionCompletion(session);
 
         const notifications = await notificationService.getAllScheduledNotifications();
-        const notification = notifications.find(n =>
-          n.content.title.includes(testCase.expectedTitle)
+        const notification = notifications.find((n) =>
+          n.content.title.includes(testCase.expectedTitle),
         );
 
         expect(notification).toBeTruthy();
@@ -167,7 +165,7 @@ describe('Notification Scheduling Integration Tests', () => {
       const notification = notifications[0];
 
       const scheduledTime = new Date(notification.trigger.date).getTime();
-      const expectedTime = startTime + (duration * 1000);
+      const expectedTime = startTime + duration * 1000;
 
       // Should be within 1 second of expected time
       expect(Math.abs(scheduledTime - expectedTime)).toBeLessThan(1000);
@@ -328,15 +326,13 @@ describe('Notification Scheduling Integration Tests', () => {
     it('should handle notification scheduling failures gracefully', async () => {
       // Mock notification scheduling failure
       vi.mocked(notificationService.scheduleNotificationAsync).mockRejectedValue(
-        new Error('Notification scheduling failed')
+        new Error('Notification scheduling failed'),
       );
 
       const session = await timerService.startSession('work', 1500);
 
       // Should not throw error
-      await expect(
-        notificationService.scheduleSessionCompletion(session)
-      ).resolves.not.toThrow();
+      await expect(notificationService.scheduleSessionCompletion(session)).resolves.not.toThrow();
 
       // Should log error but continue functioning
       expect(vi.mocked(console.error)).toHaveBeenCalled();
@@ -375,7 +371,7 @@ describe('Notification Scheduling Integration Tests', () => {
 
       // Should handle invalid data gracefully
       await expect(
-        notificationService.scheduleSessionCompletion(invalidSession as any)
+        notificationService.scheduleSessionCompletion(invalidSession as any),
       ).resolves.not.toThrow();
 
       const notifications = await notificationService.getAllScheduledNotifications();

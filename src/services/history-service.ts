@@ -48,7 +48,7 @@ export class HistoryService implements HistoryServiceContract {
     await this.saveHistory(todayHistory);
 
     // Notify callbacks
-    this.callbacks.onHistoryUpdate.forEach(callback => {
+    this.callbacks.onHistoryUpdate.forEach((callback) => {
       callback({ ...todayHistory! });
     });
 
@@ -70,12 +70,12 @@ export class HistoryService implements HistoryServiceContract {
 
     // Check and update streak
     const newStreak = await this.getCurrentStreak();
-    this.callbacks.onStreakUpdate.forEach(callback => {
+    this.callbacks.onStreakUpdate.forEach((callback) => {
       callback(newStreak);
     });
 
     // Notify callbacks
-    this.callbacks.onHistoryUpdate.forEach(callback => {
+    this.callbacks.onHistoryUpdate.forEach((callback) => {
       callback({ ...todayHistory! });
     });
 
@@ -94,7 +94,7 @@ export class HistoryService implements HistoryServiceContract {
 
     try {
       const allHistory = await this.loadAllHistory();
-      return allHistory.find(h => h.date === date) || null;
+      return allHistory.find((h) => h.date === date) || null;
     } catch (error) {
       console.error('Failed to get history by date:', error);
       return null;
@@ -112,7 +112,7 @@ export class HistoryService implements HistoryServiceContract {
 
     try {
       const allHistory = await this.loadAllHistory();
-      return allHistory.filter(h => h.date >= startDate && h.date <= endDate);
+      return allHistory.filter((h) => h.date >= startDate && h.date <= endDate);
     } catch (error) {
       console.error('Failed to get history range:', error);
       return [];
@@ -125,8 +125,8 @@ export class HistoryService implements HistoryServiceContract {
     const weekEnd = this.getWeekEnd(today);
 
     const weekHistory = await this.getHistoryRange(
-      weekStart.toISOString().split('T')[0],
-      weekEnd.toISOString().split('T')[0]
+      weekStart.toISOString().split('T')[0]!,
+      weekEnd.toISOString().split('T')[0]!,
     );
 
     const totalSessions = weekHistory.reduce((sum, h) => sum + h.completedWorkSessions, 0);
@@ -134,9 +134,10 @@ export class HistoryService implements HistoryServiceContract {
     const averageSessionsPerDay = totalSessions / 7;
 
     // Find best day (most work sessions)
-    const bestDayHistory = weekHistory.reduce((best, current) =>
-      current.completedWorkSessions > best.completedWorkSessions ? current : best,
-      weekHistory[0] || { date: weekStart.toISOString().split('T')[0], completedWorkSessions: 0 }
+    const bestDayHistory = weekHistory.reduce(
+      (best, current) =>
+        current.completedWorkSessions > best.completedWorkSessions ? current : best,
+      weekHistory[0] || { date: weekStart.toISOString().split('T')[0], completedWorkSessions: 0 },
     );
 
     const streakDays = await this.getCurrentStreak();
@@ -208,10 +209,10 @@ export class HistoryService implements HistoryServiceContract {
 
     const history = await this.getHistoryRange(
       startDate.toISOString().split('T')[0],
-      endDate.toISOString().split('T')[0]
+      endDate.toISOString().split('T')[0],
     );
 
-    return history.map(h => ({
+    return history.map((h) => ({
       date: h.date,
       sessionsCompleted: h.completedWorkSessions,
       focusTimeMinutes: Math.round(h.totalFocusTime / 60),
@@ -239,7 +240,7 @@ export class HistoryService implements HistoryServiceContract {
       const cutoffString = cutoffDate.toISOString().split('T')[0];
 
       const allHistory = await this.loadAllHistory();
-      const filteredHistory = allHistory.filter(h => h.date >= cutoffString);
+      const filteredHistory = allHistory.filter((h) => h.date >= cutoffString);
 
       await AsyncStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(filteredHistory));
     } catch (error) {
@@ -254,7 +255,7 @@ export class HistoryService implements HistoryServiceContract {
       const cutoffString = cutoffDate.toISOString().split('T')[0];
 
       const allAggregates = await this.loadAllAggregates();
-      const filteredAggregates = allAggregates.filter(a => a.date >= cutoffString);
+      const filteredAggregates = allAggregates.filter((a) => a.date >= cutoffString);
 
       await AsyncStorage.setItem(AGGREGATES_STORAGE_KEY, JSON.stringify(filteredAggregates));
     } catch (error) {
@@ -293,7 +294,7 @@ export class HistoryService implements HistoryServiceContract {
   private async saveHistory(history: SessionHistory): Promise<void> {
     try {
       const allHistory = await this.loadAllHistory();
-      const existingIndex = allHistory.findIndex(h => h.id === history.id);
+      const existingIndex = allHistory.findIndex((h) => h.id === history.id);
 
       if (existingIndex >= 0) {
         allHistory[existingIndex] = history;

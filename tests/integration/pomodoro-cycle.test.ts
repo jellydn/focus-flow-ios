@@ -270,9 +270,7 @@ describe('Complete Pomodoro Cycle Integration Tests', () => {
 
     it('should handle session completion without active cycle', async () => {
       // Try to complete session without active cycle
-      await expect(
-        cycleService.recordSessionCompletion('invalid-session-id')
-      ).rejects.toThrow();
+      await expect(cycleService.recordSessionCompletion('invalid-session-id')).rejects.toThrow();
 
       // Should not affect history
       const history = await historyService.getTodayHistory();
@@ -306,7 +304,7 @@ describe('Complete Pomodoro Cycle Integration Tests', () => {
       // Start sessions with settings-defined durations
       const workSession = await timerService.startSession(
         'work',
-        settingsService.getWorkDuration()
+        settingsService.getWorkDuration(),
       );
       expect(workSession.duration).toBe(1500);
 
@@ -315,7 +313,7 @@ describe('Complete Pomodoro Cycle Integration Tests', () => {
 
       const breakSession = await timerService.startSession(
         'shortBreak',
-        settingsService.getShortBreakDuration()
+        settingsService.getShortBreakDuration(),
       );
       expect(breakSession.duration).toBe(300);
     });
@@ -327,9 +325,7 @@ describe('Complete Pomodoro Cycle Integration Tests', () => {
         const workSession = await timerService.startSession('work', 1500);
 
         // Should schedule notification for session completion
-        await expect(
-          timerService.scheduleNotification(workSession)
-        ).resolves.not.toThrow();
+        await expect(timerService.scheduleNotification(workSession)).resolves.not.toThrow();
       }
     });
   });

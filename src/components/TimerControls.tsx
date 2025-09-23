@@ -21,7 +21,7 @@ export function TimerControls({
   onResume,
   onStop,
   onReset,
-  disabled = false
+  disabled = false,
 }: TimerControlsProps) {
   const getSessionColor = (type?: SessionType): string => {
     switch (type) {
@@ -120,16 +120,16 @@ export function TimerControls({
 
   return (
     <View style={styles.container}>
-      <View style={styles.primaryControls}>
-        {renderPrimaryButton()}
-      </View>
+      <View style={styles.primaryControls}>{renderPrimaryButton()}</View>
 
       {renderSecondaryButtons()}
 
       {status === 'completed' && (
         <View style={styles.completionMessage}>
           <Text style={styles.completionText}>
-            {sessionType === 'work' ? '🎉 Great focus! Time for a break.' : '✨ Break complete! Ready to focus?'}
+            {sessionType === 'work'
+              ? '🎉 Great focus! Time for a break.'
+              : '✨ Break complete! Ready to focus?'}
           </Text>
         </View>
       )}

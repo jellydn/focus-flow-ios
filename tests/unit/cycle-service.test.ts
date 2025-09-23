@@ -215,9 +215,7 @@ describe('CycleService Contract Tests', () => {
 
   describe('Error Handling', () => {
     it('should throw error when recording session without active cycle', async () => {
-      await expect(
-        cycleService.recordSessionCompletion('session1')
-      ).rejects.toThrow();
+      await expect(cycleService.recordSessionCompletion('session1')).rejects.toThrow();
     });
 
     it('should throw error when completing non-existent cycle', async () => {
@@ -231,9 +229,7 @@ describe('CycleService Contract Tests', () => {
     it('should throw error for invalid session ID', async () => {
       await cycleService.startNewCycle();
 
-      await expect(
-        cycleService.recordSessionCompletion('')
-      ).rejects.toThrow();
+      await expect(cycleService.recordSessionCompletion('')).rejects.toThrow();
     });
   });
 

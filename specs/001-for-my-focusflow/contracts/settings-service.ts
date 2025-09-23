@@ -37,14 +37,14 @@ export interface SettingsServiceError {
 export const DEFAULT_SETTINGS: UserSettings = {
   notificationsEnabled: true,
   soundEnabled: true,
-  theme: 'system'
+  theme: 'system',
 };
 
 // Fixed timer durations (MVP constants)
 export const TIMER_DURATIONS = {
   work: 1500, // 25 minutes in seconds
   shortBreak: 300, // 5 minutes in seconds
-  longBreak: 900 // 15 minutes in seconds
+  longBreak: 900, // 15 minutes in seconds
 } as const;
 
 export interface UpdateSettingsRequest {

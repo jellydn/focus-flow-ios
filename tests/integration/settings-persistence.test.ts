@@ -39,10 +39,7 @@ describe('Settings Persistence Integration Tests', () => {
         theme: 'light',
       };
 
-      await AsyncStorage.setItem(
-        '@focusflow:settings',
-        JSON.stringify(persistedSettings)
-      );
+      await AsyncStorage.setItem('@focusflow:settings', JSON.stringify(persistedSettings));
 
       // Create new service instance (simulating app restart)
       const newSettingsService = new SettingsService();
@@ -87,14 +84,11 @@ describe('Settings Persistence Integration Tests', () => {
         soundEnabled: true,
         theme: 'dark',
         customWorkDuration: 1800, // Should be ignored in MVP
-        autoStartBreaks: true,     // Should be ignored in MVP
-        unknownField: 'value',     // Should be ignored
+        autoStartBreaks: true, // Should be ignored in MVP
+        unknownField: 'value', // Should be ignored
       };
 
-      await AsyncStorage.setItem(
-        '@focusflow:settings',
-        JSON.stringify(oldFormatSettings)
-      );
+      await AsyncStorage.setItem('@focusflow:settings', JSON.stringify(oldFormatSettings));
 
       const newSettingsService = new SettingsService();
       const settings = await newSettingsService.getSettings();
@@ -169,8 +163,8 @@ describe('Settings Persistence Integration Tests', () => {
       const updatedSettings = await settingsService.getSettings();
       expect(updatedSettings).toEqual({
         notificationsEnabled: true, // updated
-        soundEnabled: false,        // preserved
-        theme: 'dark',              // preserved
+        soundEnabled: false, // preserved
+        theme: 'dark', // preserved
       });
     });
   });
@@ -178,14 +172,10 @@ describe('Settings Persistence Integration Tests', () => {
   describe('Storage Error Handling', () => {
     it('should handle AsyncStorage write failures gracefully', async () => {
       // Mock AsyncStorage failure
-      vi.mocked(AsyncStorage.setItem).mockRejectedValue(
-        new Error('Storage quota exceeded')
-      );
+      vi.mocked(AsyncStorage.setItem).mockRejectedValue(new Error('Storage quota exceeded'));
 
       // Should not throw error
-      await expect(
-        settingsService.updateSettings({ theme: 'dark' })
-      ).resolves.not.toThrow();
+      await expect(settingsService.updateSettings({ theme: 'dark' })).resolves.not.toThrow();
 
       // Should log error
       expect(vi.mocked(console.error)).toHaveBeenCalled();
@@ -197,9 +187,7 @@ describe('Settings Persistence Integration Tests', () => {
 
     it('should handle AsyncStorage read failures gracefully', async () => {
       // Mock AsyncStorage read failure
-      vi.mocked(AsyncStorage.getItem).mockRejectedValue(
-        new Error('Storage read failed')
-      );
+      vi.mocked(AsyncStorage.getItem).mockRejectedValue(new Error('Storage read failed'));
 
       const newSettingsService = new SettingsService();
       const settings = await newSettingsService.getSettings();
@@ -233,9 +221,7 @@ describe('Settings Persistence Integration Tests', () => {
   describe('Data Validation and Sanitization', () => {
     it('should validate setting values before persistence', async () => {
       // Try to set invalid theme value
-      await expect(
-        settingsService.updateSettings({ theme: 'invalid' as any })
-      ).rejects.toThrow();
+      await expect(settingsService.updateSettings({ theme: 'invalid' as any })).rejects.toThrow();
 
       // Settings should remain unchanged
       const settings = await settingsService.getSettings();
@@ -246,7 +232,7 @@ describe('Settings Persistence Integration Tests', () => {
       // Try to update with non-boolean values
       const updates = {
         notificationsEnabled: 'true' as any, // string instead of boolean
-        soundEnabled: 1 as any,               // number instead of boolean
+        soundEnabled: 1 as any, // number instead of boolean
       };
 
       await settingsService.updateSettings(updates);
@@ -262,13 +248,9 @@ describe('Settings Persistence Integration Tests', () => {
 
     it('should reject settings updates with missing required fields', async () => {
       // Try to update with null/undefined values
-      await expect(
-        settingsService.updateSettings({ theme: null as any })
-      ).rejects.toThrow();
+      await expect(settingsService.updateSettings({ theme: null as any })).rejects.toThrow();
 
-      await expect(
-        settingsService.updateSettings({ theme: undefined as any })
-      ).rejects.toThrow();
+      await expect(settingsService.updateSettings({ theme: undefined as any })).rejects.toThrow();
     });
   });
 
@@ -287,7 +269,7 @@ describe('Settings Persistence Integration Tests', () => {
 
       // Should not accumulate excessive data in AsyncStorage
       const allKeys = await AsyncStorage.getAllKeys();
-      const settingsKeys = allKeys.filter(key => key.includes('settings'));
+      const settingsKeys = allKeys.filter((key) => key.includes('settings'));
       expect(settingsKeys).toHaveLength(1); // Only one settings key
     });
 
@@ -329,9 +311,7 @@ describe('Settings Persistence Integration Tests', () => {
 
       await settingsService.updateSettings({ theme: 'dark' });
 
-      expect(changeCallback).toHaveBeenCalledWith(
-        expect.objectContaining({ theme: 'dark' })
-      );
+      expect(changeCallback).toHaveBeenCalledWith(expect.objectContaining({ theme: 'dark' }));
     });
 
     it('should not emit events for failed persistence', async () => {

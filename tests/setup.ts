@@ -1,6 +1,9 @@
 // Vitest setup file for React Native testing
 import { vi } from 'vitest';
 
+// React Native environment globals
+global.__DEV__ = true;
+
 // Setup DOM environment
 Object.defineProperty(globalThis, 'window', {
   value: {

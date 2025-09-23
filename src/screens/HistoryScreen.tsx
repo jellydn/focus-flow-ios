@@ -46,7 +46,6 @@ export function HistoryScreen() {
       // Load recent daily aggregates (last 7 days)
       const aggregates = await historyService.getDailyAggregates(1);
       setRecentAggregates(aggregates.slice(-7));
-
     } catch (error) {
       console.error('Failed to load history data:', error);
       Alert.alert('Error', 'Failed to load history. Please try again.');
@@ -67,7 +66,11 @@ export function HistoryScreen() {
   }, [historyService, loadHistoryData]);
 
   // Reload data when screen is focused
-  useFocusEffect(loadHistoryData);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadHistoryData();
+    }, [loadHistoryData])
+  );
 
   const formatDuration = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
@@ -116,7 +119,7 @@ export function HistoryScreen() {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -124,7 +127,7 @@ export function HistoryScreen() {
     title: string,
     value: string | number,
     subtitle?: string,
-    color: string = '#3498DB'
+    color: string = '#3498DB',
   ) => (
     <View style={[styles.statCard, { borderLeftColor: color }]}>
       <Text style={styles.statTitle}>{title}</Text>
@@ -149,9 +152,7 @@ export function HistoryScreen() {
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          {/* Could add a loading spinner here */}
-        </View>
+        <View style={styles.loadingContainer}>{/* Could add a loading spinner here */}</View>
       </SafeAreaView>
     );
   }
@@ -172,25 +173,20 @@ export function HistoryScreen() {
               'Work Sessions',
               todayHistory?.completedWorkSessions || 0,
               undefined,
-              '#E74C3C'
+              '#E74C3C',
             )}
             {renderStatCard(
               'Focus Time',
               formatDuration(todayHistory?.totalFocusTime || 0),
               undefined,
-              '#27AE60'
+              '#27AE60',
             )}
-            {renderStatCard(
-              'Cycles',
-              todayHistory?.completedCycles || 0,
-              undefined,
-              '#3498DB'
-            )}
+            {renderStatCard('Cycles', todayHistory?.completedCycles || 0, undefined, '#3498DB')}
             {renderStatCard(
               'Streak',
               `${currentStreak} ${getStreakEmoji(currentStreak)}`,
               currentStreak === 1 ? 'day' : 'days',
-              '#F39C12'
+              '#F39C12',
             )}
           </View>
         </View>
@@ -210,7 +206,9 @@ export function HistoryScreen() {
               </View>
               <View style={styles.weeklyRow}>
                 <Text style={styles.weeklyLabel}>Daily Average</Text>
-                <Text style={styles.weeklyValue}>{weeklyStats.averageSessionsPerDay.toFixed(1)}</Text>
+                <Text style={styles.weeklyValue}>
+                  {weeklyStats.averageSessionsPerDay.toFixed(1)}
+                </Text>
               </View>
               <View style={styles.weeklyRow}>
                 <Text style={styles.weeklyLabel}>Best Day</Text>
@@ -229,7 +227,9 @@ export function HistoryScreen() {
             ) : (
               <View style={styles.emptyState}>
                 <Text style={styles.emptyText}>No activity yet</Text>
-                <Text style={styles.emptySubtext}>Start a focus session to see your progress here</Text>
+                <Text style={styles.emptySubtext}>
+                  Start a focus session to see your progress here
+                </Text>
               </View>
             )}
           </View>
@@ -248,10 +248,7 @@ export function HistoryScreen() {
 
         {/* Actions */}
         <View style={styles.section}>
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={clearAllHistory}
-          >
+          <TouchableOpacity style={styles.clearButton} onPress={clearAllHistory}>
             <Text style={styles.clearButtonText}>Clear All History</Text>
           </TouchableOpacity>
         </View>

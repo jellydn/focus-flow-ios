@@ -11,8 +11,8 @@ export interface TimerSession {
   cyclePosition?: number;
   startedAt: Date | null;
   completedAt: Date | null;
-  pausedAt?: Date | null;
-  resumedAt?: Date | null;
+  pausedAt: Date | null;
+  resumedAt: Date | null;
 }
 
 export interface TimerServiceContract {

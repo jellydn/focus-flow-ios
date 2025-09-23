@@ -3,7 +3,6 @@ import type {
   PomodorocoCycle,
   CycleProgress,
   CycleServiceContract,
-  CycleStatus,
 } from '@/types/pomodoro-cycle';
 import type { SessionType } from '@/types/timer-session';
 import { CYCLE_WORKFLOW } from '@/types/pomodoro-cycle';
@@ -44,7 +43,7 @@ export class CycleService implements CycleServiceContract {
     const completedCycle = { ...this.currentCycle };
 
     // Notify completion callbacks
-    this.callbacks.onComplete.forEach(callback => {
+    this.callbacks.onComplete.forEach((callback) => {
       callback(completedCycle);
     });
 
@@ -88,7 +87,11 @@ export class CycleService implements CycleServiceContract {
     const currentPosition = this.calculateCurrentPosition();
 
     // Position is 1-based, array is 0-based
-    return CYCLE_WORKFLOW[currentPosition - 1];
+    const sessionType = CYCLE_WORKFLOW[currentPosition - 1];
+    if (!sessionType) {
+      throw new Error(`Invalid position ${currentPosition} in cycle workflow`);
+    }
+    return sessionType;
   }
 
   async recordSessionCompletion(sessionId: string): Promise<CycleProgress> {
@@ -126,7 +129,7 @@ export class CycleService implements CycleServiceContract {
     }
 
     // Notify progress callbacks
-    this.callbacks.onProgressUpdate.forEach(callback => {
+    this.callbacks.onProgressUpdate.forEach((callback) => {
       callback(progress);
     });
 

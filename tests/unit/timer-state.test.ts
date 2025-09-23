@@ -68,7 +68,7 @@ describe('Timer State Machine Tests', () => {
         type: 'START_SESSION',
         sessionType: 'work',
         duration: 1500,
-        cyclePosition: 1
+        cyclePosition: 1,
       });
 
       const context = timerStateMachine.getState().context;

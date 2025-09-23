@@ -16,7 +16,7 @@ export function ProgressRing({
   size,
   strokeWidth,
   sessionType,
-  backgroundColor = '#E5E5E5'
+  backgroundColor = '#E5E5E5',
 }: ProgressRingProps) {
   const getSessionColor = (type: SessionType): string => {
     switch (type) {

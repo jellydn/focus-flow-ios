@@ -46,10 +46,7 @@ export function SettingsScreen() {
     });
   };
 
-  const updateSetting = async <K extends keyof UserSettings>(
-    key: K,
-    value: UserSettings[K]
-  ) => {
+  const updateSetting = async <K extends keyof UserSettings>(key: K, value: UserSettings[K]) => {
     try {
       await settingsService.updateSettings({ [key]: value });
     } catch (error) {
@@ -77,7 +74,7 @@ export function SettingsScreen() {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -97,41 +94,29 @@ export function SettingsScreen() {
   const showThemePicker = () => {
     const themes: Theme[] = ['light', 'dark', 'system'];
 
-    Alert.alert(
-      'Choose Theme',
-      'Select your preferred theme:',
-      [
-        ...themes.map(theme => ({
-          text: getThemeDisplayName(theme),
-          onPress: () => updateSetting('theme', theme),
-        })),
-        { text: 'Cancel', style: 'cancel' },
-      ]
-    );
+    Alert.alert('Choose Theme', 'Select your preferred theme:', [
+      ...themes.map((theme) => ({
+        text: getThemeDisplayName(theme),
+        onPress: () => updateSetting('theme', theme),
+      })),
+      { text: 'Cancel', style: 'cancel' },
+    ]);
   };
 
-  const renderSettingRow = (
-    title: string,
-    description: string,
-    content: React.ReactNode
-  ) => (
+  const renderSettingRow = (title: string, description: string, content: React.ReactNode) => (
     <View style={styles.settingRow}>
       <View style={styles.settingInfo}>
         <Text style={styles.settingTitle}>{title}</Text>
         <Text style={styles.settingDescription}>{description}</Text>
       </View>
-      <View style={styles.settingControl}>
-        {content}
-      </View>
+      <View style={styles.settingControl}>{content}</View>
     </View>
   );
 
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          {/* Could add a loading spinner here */}
-        </View>
+        <View style={styles.loadingContainer}>{/* Could add a loading spinner here */}</View>
       </SafeAreaView>
     );
   }
@@ -155,7 +140,7 @@ export function SettingsScreen() {
               onValueChange={(value) => updateSetting('notificationsEnabled', value)}
               trackColor={{ false: '#E5E5E5', true: '#27AE60' }}
               thumbColor="#FFFFFF"
-            />
+            />,
           )}
 
           {renderSettingRow(
@@ -167,7 +152,7 @@ export function SettingsScreen() {
               disabled={!settings.notificationsEnabled}
               trackColor={{ false: '#E5E5E5', true: '#3498DB' }}
               thumbColor="#FFFFFF"
-            />
+            />,
           )}
         </View>
 
@@ -177,15 +162,10 @@ export function SettingsScreen() {
           {renderSettingRow(
             'Theme',
             'Choose your preferred theme',
-            <TouchableOpacity
-              style={styles.themeButton}
-              onPress={showThemePicker}
-            >
-              <Text style={styles.themeButtonText}>
-                {getThemeDisplayName(settings.theme)}
-              </Text>
+            <TouchableOpacity style={styles.themeButton} onPress={showThemePicker}>
+              <Text style={styles.themeButtonText}>{getThemeDisplayName(settings.theme)}</Text>
               <Text style={styles.chevron}>›</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>,
           )}
         </View>
 
@@ -213,10 +193,7 @@ export function SettingsScreen() {
         </View>
 
         <View style={styles.section}>
-          <TouchableOpacity
-            style={styles.resetButton}
-            onPress={resetToDefaults}
-          >
+          <TouchableOpacity style={styles.resetButton} onPress={resetToDefaults}>
             <Text style={styles.resetButtonText}>Reset to Defaults</Text>
           </TouchableOpacity>
         </View>

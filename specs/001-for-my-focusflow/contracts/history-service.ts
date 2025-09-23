@@ -33,7 +33,10 @@ export interface WeeklyStats {
 
 export interface HistoryServiceContract {
   // Session Recording
-  recordCompletedSession(sessionType: 'work' | 'shortBreak' | 'longBreak', duration: number): Promise<SessionHistory>;
+  recordCompletedSession(
+    sessionType: 'work' | 'shortBreak' | 'longBreak',
+    duration: number,
+  ): Promise<SessionHistory>;
   recordCompletedCycle(): Promise<SessionHistory>;
 
   // Daily History
@@ -82,7 +85,7 @@ export interface GetStatsRequest {
 export const RETENTION_POLICY = {
   detailedHistory: 30, // days
   dailyAggregates: 180, // days (6 months)
-  cleanupInterval: 7 // days between cleanup runs
+  cleanupInterval: 7, // days between cleanup runs
 } as const;
 
 export interface HistoryServiceEvents {

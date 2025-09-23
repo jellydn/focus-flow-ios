@@ -161,9 +161,7 @@ describe('TimerService Contract Tests', () => {
 
   describe('Error Handling', () => {
     it('should throw error for invalid session type', async () => {
-      await expect(
-        timerService.startSession('invalid' as any, 1500)
-      ).rejects.toThrow();
+      await expect(timerService.startSession('invalid' as any, 1500)).rejects.toThrow();
     });
 
     it('should throw error when pausing non-existent session', async () => {

@@ -1,9 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type {
-  UserSettings,
-  SettingsServiceContract,
-  Theme,
-} from '@/types/user-settings';
+import type { UserSettings, SettingsServiceContract, Theme } from '@/types/user-settings';
 import { DEFAULT_SETTINGS, TIMER_DURATIONS } from '@/types/user-settings';
 
 const STORAGE_KEY = '@focusflow:settings';
@@ -51,7 +47,7 @@ export class SettingsService implements SettingsServiceContract {
       this.currentSettings = validatedSettings;
 
       // Notify callbacks
-      this.callbacks.forEach(callback => {
+      this.callbacks.forEach((callback) => {
         callback({ ...validatedSettings });
       });
 
@@ -73,7 +69,7 @@ export class SettingsService implements SettingsServiceContract {
       this.currentSettings = { ...DEFAULT_SETTINGS };
 
       // Notify callbacks
-      this.callbacks.forEach(callback => {
+      this.callbacks.forEach((callback) => {
         callback({ ...DEFAULT_SETTINGS });
       });
 
@@ -106,7 +102,10 @@ export class SettingsService implements SettingsServiceContract {
 
   private validateSettings(settings: any): UserSettings {
     return {
-      notificationsEnabled: this.validateBoolean(settings.notificationsEnabled, DEFAULT_SETTINGS.notificationsEnabled),
+      notificationsEnabled: this.validateBoolean(
+        settings.notificationsEnabled,
+        DEFAULT_SETTINGS.notificationsEnabled,
+      ),
       soundEnabled: this.validateBoolean(settings.soundEnabled, DEFAULT_SETTINGS.soundEnabled),
       theme: this.validateTheme(settings.theme, DEFAULT_SETTINGS.theme),
     };
@@ -117,7 +116,10 @@ export class SettingsService implements SettingsServiceContract {
       throw new Error(`Invalid theme: ${updates.theme}`);
     }
 
-    if (updates.notificationsEnabled !== undefined && typeof updates.notificationsEnabled !== 'boolean') {
+    if (
+      updates.notificationsEnabled !== undefined &&
+      typeof updates.notificationsEnabled !== 'boolean'
+    ) {
       throw new Error(`Invalid notificationsEnabled: ${updates.notificationsEnabled}`);
     }
 

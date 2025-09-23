@@ -46,7 +46,7 @@ export class PersistenceService {
     }
 
     this.debounceTimer = setTimeout(() => {
-      this.saveState(state).catch(error => {
+      this.saveState(state).catch((error) => {
         console.error('Debounced save failed:', error);
       });
     }, this.debounceDelay);
@@ -72,7 +72,7 @@ export class PersistenceService {
 
   private async withRetry<T>(
     operation: () => Promise<T>,
-    attempts: number = RETRY_ATTEMPTS
+    attempts: number = RETRY_ATTEMPTS,
   ): Promise<T> {
     let lastError: Error | null = null;
 
@@ -84,7 +84,7 @@ export class PersistenceService {
 
         if (i < attempts - 1) {
           // Wait before retrying
-          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
         }
       }
     }
@@ -123,9 +123,8 @@ export class PersistenceService {
       // Validate background state
       const background = {
         isActive: Boolean(state.background?.isActive),
-        backgroundedAt: state.background?.backgroundedAt instanceof Date
-          ? state.background.backgroundedAt
-          : null,
+        backgroundedAt:
+          state.background?.backgroundedAt instanceof Date ? state.background.backgroundedAt : null,
       };
 
       return {

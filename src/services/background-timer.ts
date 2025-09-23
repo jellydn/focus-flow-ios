@@ -60,8 +60,9 @@ export class BackgroundTimerService {
   async isTaskActive(): Promise<boolean> {
     try {
       const status = await BackgroundFetch.getStatusAsync();
-      return status === BackgroundFetch.BackgroundFetchStatus.Available &&
-             this.taskOptions !== null;
+      return (
+        status === BackgroundFetch.BackgroundFetchStatus.Available && this.taskOptions !== null
+      );
     } catch (error) {
       console.error('Failed to check task status:', error);
       return false;
@@ -103,7 +104,7 @@ export class BackgroundTimerService {
   private async registerBackgroundTask(): Promise<void> {
     try {
       if (!TaskManager.isTaskDefined(BACKGROUND_TIMER_TASK)) {
-        TaskManager.defineTask(BACKGROUND_TIMER_TASK, async ({ data, error }) => {
+        TaskManager.defineTask(BACKGROUND_TIMER_TASK, async ({ error }) => {
           if (error) {
             console.error('Background task error:', error);
             return BackgroundFetch.BackgroundFetchResult.Failed;

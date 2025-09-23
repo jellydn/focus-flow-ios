@@ -164,7 +164,7 @@ describe('SettingsService Contract Tests', () => {
       await expect(
         settingsService.updateSettings({
           theme: 'invalid' as any,
-        })
+        }),
       ).rejects.toThrow();
     });
 

@@ -32,9 +32,7 @@ const TabIcon = ({ focused, name }: { focused: boolean; name: string }) => {
 
   return (
     <View style={styles.tabIconContainer}>
-      <Text style={[styles.tabIcon, { opacity: focused ? 1 : 0.6 }]}>
-        {getIcon(name)}
-      </Text>
+      <Text style={[styles.tabIcon, { opacity: focused ? 1 : 0.6 }]}>{getIcon(name)}</Text>
     </View>
   );
 };
@@ -44,9 +42,7 @@ export function AppNavigator() {
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} name={route.name} />
-          ),
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} name={route.name} />,
           tabBarActiveTintColor: '#E74C3C',
           tabBarInactiveTintColor: '#7F8C8D',
           tabBarStyle: {

@@ -13,7 +13,7 @@ export function TimerDisplay({
   remainingTime,
   sessionType,
   isRunning,
-  isPaused
+  isPaused,
 }: TimerDisplayProps) {
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -61,9 +61,7 @@ export function TimerDisplay({
         <Text style={[styles.sessionTitle, { color: sessionColor }]}>
           {getSessionTitle(sessionType)}
         </Text>
-        <Text style={[styles.statusText, { color: sessionColor }]}>
-          {getStatusText()}
-        </Text>
+        <Text style={[styles.statusText, { color: sessionColor }]}>{getStatusText()}</Text>
       </View>
 
       <View style={styles.timeContainer}>
@@ -74,17 +72,9 @@ export function TimerDisplay({
 
       <View style={styles.progressIndicator}>
         <View
-          style={[
-            styles.progressDot,
-            { backgroundColor: isRunning ? sessionColor : '#E5E5E5' }
-          ]}
+          style={[styles.progressDot, { backgroundColor: isRunning ? sessionColor : '#E5E5E5' }]}
         />
-        <View
-          style={[
-            styles.progressDot,
-            { backgroundColor: isPaused ? '#F39C12' : '#E5E5E5' }
-          ]}
-        />
+        <View style={[styles.progressDot, { backgroundColor: isPaused ? '#F39C12' : '#E5E5E5' }]} />
       </View>
     </View>
   );

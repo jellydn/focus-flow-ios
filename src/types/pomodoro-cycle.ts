@@ -51,12 +51,12 @@ export interface CycleServiceContract {
 // 7. Work (25 min)
 // 8. Long Break (15 min)
 export const CYCLE_WORKFLOW: SessionType[] = [
-  'work',        // Position 1
-  'shortBreak',  // Position 2
-  'work',        // Position 3
-  'shortBreak',  // Position 4
-  'work',        // Position 5
-  'shortBreak',  // Position 6
-  'work',        // Position 7
-  'longBreak'    // Position 8
+  'work', // Position 1
+  'shortBreak', // Position 2
+  'work', // Position 3
+  'shortBreak', // Position 4
+  'work', // Position 5
+  'shortBreak', // Position 6
+  'work', // Position 7
+  'longBreak', // Position 8
 ] as const;

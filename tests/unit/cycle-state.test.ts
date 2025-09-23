@@ -165,21 +165,21 @@ describe('Cycle State Machine Tests', () => {
       cycleStateMachine.send({ type: 'START_CYCLE' });
 
       const expectedWorkflow = [
-        'work',        // Position 1
-        'shortBreak',  // Position 2
-        'work',        // Position 3
-        'shortBreak',  // Position 4
-        'work',        // Position 5
-        'shortBreak',  // Position 6
-        'work',        // Position 7
-        'longBreak'    // Position 8
+        'work', // Position 1
+        'shortBreak', // Position 2
+        'work', // Position 3
+        'shortBreak', // Position 4
+        'work', // Position 5
+        'shortBreak', // Position 6
+        'work', // Position 7
+        'longBreak', // Position 8
       ];
 
       for (let i = 0; i < expectedWorkflow.length; i++) {
         expect(cycleStateMachine.getNextSessionType()).toBe(expectedWorkflow[i]);
         cycleStateMachine.send({
           type: 'COMPLETE_SESSION',
-          sessionType: expectedWorkflow[i]
+          sessionType: expectedWorkflow[i],
         });
       }
 
@@ -215,7 +215,7 @@ describe('Cycle State Machine Tests', () => {
       cycleStateMachine.send({
         type: 'COMPLETE_SESSION',
         sessionType: 'work',
-        sessionId: 'work-session-1'
+        sessionId: 'work-session-1',
       });
 
       const context = cycleStateMachine.getState().context;
@@ -228,13 +228,13 @@ describe('Cycle State Machine Tests', () => {
       cycleStateMachine.send({
         type: 'COMPLETE_SESSION',
         sessionType: 'work',
-        sessionId: 'work-1'
+        sessionId: 'work-1',
       });
 
       cycleStateMachine.send({
         type: 'COMPLETE_SESSION',
         sessionType: 'shortBreak',
-        sessionId: 'break-1'
+        sessionId: 'break-1',
       });
 
       const context = cycleStateMachine.getState().context;
@@ -251,14 +251,14 @@ describe('Cycle State Machine Tests', () => {
         cycleStateMachine.send({
           type: 'COMPLETE_SESSION',
           sessionType,
-          sessionId: `session-${i + 1}`
+          sessionId: `session-${i + 1}`,
         });
       }
 
       cycleStateMachine.send({
         type: 'COMPLETE_SESSION',
         sessionType: 'longBreak',
-        sessionId: 'long-break-1'
+        sessionId: 'long-break-1',
       });
 
       const context = cycleStateMachine.getState().context;
@@ -271,7 +271,7 @@ describe('Cycle State Machine Tests', () => {
       cycleStateMachine.send({ type: 'START_CYCLE' });
       cycleStateMachine.send({
         type: 'COMPLETE_SESSION',
-        sessionType: 'invalid'
+        sessionType: 'invalid',
       });
 
       // Should remain in current position
@@ -281,7 +281,7 @@ describe('Cycle State Machine Tests', () => {
     it('should handle session completion when cycle not active', () => {
       cycleStateMachine.send({
         type: 'COMPLETE_SESSION',
-        sessionType: 'work'
+        sessionType: 'work',
       });
 
       // Should remain in inactive state
@@ -293,7 +293,7 @@ describe('Cycle State Machine Tests', () => {
 
       // Complete full cycle
       for (let i = 0; i < 8; i++) {
-        const sessionType = i === 7 ? 'longBreak' : (i % 2 === 0 ? 'work' : 'shortBreak');
+        const sessionType = i === 7 ? 'longBreak' : i % 2 === 0 ? 'work' : 'shortBreak';
         cycleStateMachine.send({ type: 'COMPLETE_SESSION', sessionType });
       }
 
@@ -317,7 +317,7 @@ describe('Cycle State Machine Tests', () => {
         expect.objectContaining({
           currentPosition: 2,
           workSessionsCompleted: 1,
-        })
+        }),
       );
     });
 

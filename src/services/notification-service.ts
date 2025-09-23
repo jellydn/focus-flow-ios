@@ -8,6 +8,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -39,7 +41,6 @@ export class NotificationService {
           allowCriticalAlerts: false,
           provideAppNotificationSettings: false,
           allowProvisional: false,
-          allowAnnouncements: false,
         },
       });
 
@@ -97,6 +98,7 @@ export class NotificationService {
         identifier: `session-${session.id}`,
         content,
         trigger: {
+          type: 'date',
           date: scheduledTime,
         },
       });
@@ -246,7 +248,7 @@ export class NotificationService {
       if (position <= 6) {
         return `Great focus! Time for a short break. (${Math.ceil(position / 2)} of 4 work sessions)`;
       } else {
-        return 'Excellent work! Time for a long break - you\'ve earned it!';
+        return "Excellent work! Time for a long break - you've earned it!";
       }
     }
 

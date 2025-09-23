@@ -3,7 +3,7 @@ import type {
   HistoryServiceContract,
   SessionHistory,
   DailyAggregate,
-  WeeklyStats
+  WeeklyStats,
 } from '@/types/session-history';
 
 // This will fail until implementation exists
@@ -213,26 +213,20 @@ describe('HistoryService Contract Tests', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid date format', async () => {
-      await expect(
-        historyService.getHistoryByDate('invalid-date')
-      ).rejects.toThrow();
+      await expect(historyService.getHistoryByDate('invalid-date')).rejects.toThrow();
     });
 
     it('should handle invalid session type', async () => {
-      await expect(
-        historyService.recordCompletedSession('invalid' as any, 1500)
-      ).rejects.toThrow();
+      await expect(historyService.recordCompletedSession('invalid' as any, 1500)).rejects.toThrow();
     });
 
     it('should handle negative duration', async () => {
-      await expect(
-        historyService.recordCompletedSession('work', -100)
-      ).rejects.toThrow();
+      await expect(historyService.recordCompletedSession('work', -100)).rejects.toThrow();
     });
 
     it('should handle invalid date range', async () => {
       await expect(
-        historyService.getHistoryRange('2025-09-25', '2025-09-20') // end before start
+        historyService.getHistoryRange('2025-09-25', '2025-09-20'), // end before start
       ).rejects.toThrow();
     });
   });

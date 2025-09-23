@@ -43,118 +43,115 @@ export const initialState: AppState = {
   },
 };
 
-export const appStore = createStore(
-  initialState,
-  {
-    // Timer events
-    startSession: {
-      timer: (context, event: { session: TimerSession }) => ({
-        ...context.timer,
-        session: event.session,
-        isRunning: true,
-        isPaused: false,
-      }),
-    },
+export const appStore = createStore(initialState, {
+  // Timer events
+  startSession: {
+    timer: (context, event: { session: TimerSession }) => ({
+      ...context.timer,
+      session: event.session,
+      isRunning: true,
+      isPaused: false,
+    }),
+  },
 
-    pauseSession: {
-      timer: (context) => ({
-        ...context.timer,
-        isRunning: false,
-        isPaused: true,
-      }),
-    },
+  pauseSession: {
+    timer: (context) => ({
+      ...context.timer,
+      isRunning: false,
+      isPaused: true,
+    }),
+  },
 
-    resumeSession: {
-      timer: (context) => ({
-        ...context.timer,
-        isRunning: true,
-        isPaused: false,
-      }),
-    },
+  resumeSession: {
+    timer: (context) => ({
+      ...context.timer,
+      isRunning: true,
+      isPaused: false,
+    }),
+  },
 
-    stopSession: {
-      timer: (context) => ({
-        ...context.timer,
-        session: null,
-        isRunning: false,
-        isPaused: false,
-      }),
-    },
+  stopSession: {
+    timer: (context) => ({
+      ...context.timer,
+      session: null,
+      isRunning: false,
+      isPaused: false,
+    }),
+  },
 
-    updateSessionTime: {
-      timer: (context, event: { remainingTime: number }) => ({
-        ...context.timer,
-        session: context.timer.session
-          ? { ...context.timer.session, remainingTime: event.remainingTime }
-          : null,
-      }),
-    },
+  updateSessionTime: {
+    timer: (context, event: { remainingTime: number }) => ({
+      ...context.timer,
+      session: context.timer.session
+        ? { ...context.timer.session, remainingTime: event.remainingTime }
+        : null,
+    }),
+  },
 
-    completeSession: {
-      timer: (context, event: { completedSession: TimerSession }) => ({
-        ...context.timer,
-        session: event.completedSession,
-        isRunning: false,
-        isPaused: false,
-      }),
-    },
+  completeSession: {
+    timer: (context, event: { completedSession: TimerSession }) => ({
+      ...context.timer,
+      session: event.completedSession,
+      isRunning: false,
+      isPaused: false,
+    }),
+  },
 
-    // Cycle events
-    startCycle: {
-      cycle: (context, event: { cycle: PomodorocoCycle }) => ({
-        ...context.cycle,
-        current: event.cycle,
-        position: 1,
-      }),
-    },
+  // Cycle events
+  startCycle: {
+    cycle: (context, event: { cycle: PomodorocoCycle }) => ({
+      ...context.cycle,
+      current: event.cycle,
+      position: 1,
+    }),
+  },
 
-    updateCycleProgress: {
-      cycle: (context, event: { position: number; cycle: PomodorocoCycle }) => ({
-        ...context.cycle,
-        current: event.cycle,
-        position: event.position,
-      }),
-    },
+  updateCycleProgress: {
+    cycle: (context, event: { position: number; cycle: PomodorocoCycle }) => ({
+      ...context.cycle,
+      current: event.cycle,
+      position: event.position,
+    }),
+  },
 
-    completeCycle: {
-      cycle: (context, event: { completedCycle: PomodorocoCycle }) => ({
-        ...context.cycle,
-        current: event.completedCycle,
-      }),
-    },
+  completeCycle: {
+    cycle: (context, event: { completedCycle: PomodorocoCycle }) => ({
+      ...context.cycle,
+      current: event.completedCycle,
+    }),
+  },
 
-    resetCycle: {
-      cycle: () => ({
-        current: null,
-        position: 0,
-        totalPositions: 8,
-      }),
-    },
+  resetCycle: {
+    cycle: () => ({
+      current: null,
+      position: 0,
+      totalPositions: 8,
+    }),
+  },
 
-    // Settings events
-    updateSettings: {
-      settings: (_context, event: { settings: UserSettings }) => event.settings,
-    },
+  // Settings events
+  updateSettings: {
+    settings: (_context, event: { settings: UserSettings }) => event.settings,
+  },
 
-    // Background events
-    enterBackground: {
-      background: () => ({
-        isActive: true,
-        backgroundedAt: new Date(),
-      }),
-    },
+  // Background events
+  enterBackground: {
+    background: () => ({
+      isActive: true,
+      backgroundedAt: new Date(),
+    }),
+  },
 
-    exitBackground: {
-      background: () => ({
-        isActive: false,
-        backgroundedAt: null,
-      }),
-    },
+  exitBackground: {
+    background: () => ({
+      isActive: false,
+      backgroundedAt: null,
+    }),
+  },
 
-    // Hydrate from persistence
-    hydrate: (_context, event: { state: AppState }) => event.state,
-  }
-);
+  // Hydrate from persistence
+  hydrate: (_context, event: { state: AppState }) => event.state,
+});
 
 // Selectors
 export const selectors = {

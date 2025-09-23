@@ -178,7 +178,7 @@ export class CycleStateMachine {
     this.service.subscribe((state: any) => {
       if (state.matches('active')) {
         const progress = this.calculateProgress(state.context);
-        this.progressCallbacks.forEach(callback => callback(progress));
+        this.progressCallbacks.forEach((callback) => callback(progress));
       }
     });
   }
@@ -225,7 +225,7 @@ export class CycleStateMachine {
     this.service.subscribe((state: any) => {
       if (state.matches('active')) {
         const progress = this.calculateProgress(state.context);
-        this.progressCallbacks.forEach(callback => callback(progress));
+        this.progressCallbacks.forEach((callback) => callback(progress));
       }
     });
   }

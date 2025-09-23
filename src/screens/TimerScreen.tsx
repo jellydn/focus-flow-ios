@@ -1,11 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, StyleSheet, SafeAreaView, ScrollView, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
 import TimerDisplay from '@/components/TimerDisplay';
@@ -86,11 +80,11 @@ export function TimerScreen() {
     cycleService.onCycleComplete(() => {
       Alert.alert(
         'Cycle Complete! 🎉',
-        'Great job! You\'ve completed a full Pomodoro cycle. Ready to start a new one?',
+        "Great job! You've completed a full Pomodoro cycle. Ready to start a new one?",
         [
           { text: 'Take a Break', style: 'cancel' },
           { text: 'Start New Cycle', onPress: startNewCycle },
-        ]
+        ],
       );
     });
   }, [timerService, cycleService]);
@@ -104,32 +98,33 @@ export function TimerScreen() {
     }
   }, [cycleService]);
 
-  const handleSessionComplete = useCallback(async (session: TimerSession) => {
-    try {
-      // Record session completion in cycle
-      await cycleService.recordSessionCompletion(session.id);
+  const handleSessionComplete = useCallback(
+    async (session: TimerSession) => {
+      try {
+        // Record session completion in cycle
+        await cycleService.recordSessionCompletion(session.id);
 
-      // Show completion notification
-      const nextType = await cycleService.getNextSessionType();
-      const message = getSessionCompleteMessage(session.type, nextType);
+        // Show completion notification
+        const nextType = await cycleService.getNextSessionType();
+        const message = getSessionCompleteMessage(session.type, nextType);
 
-      Alert.alert('Session Complete! ✨', message, [
-        { text: 'Continue', onPress: () => {} }
-      ]);
-    } catch (error) {
-      console.error('Failed to handle session completion:', error);
-    }
-  }, [cycleService]);
+        Alert.alert('Session Complete! ✨', message, [{ text: 'Continue', onPress: () => {} }]);
+      } catch (error) {
+        console.error('Failed to handle session completion:', error);
+      }
+    },
+    [cycleService],
+  );
 
   const getSessionCompleteMessage = (completed: SessionType, next: SessionType): string => {
     if (completed === 'work') {
       return next === 'longBreak'
-        ? 'Excellent work! Time for a long break - you\'ve earned it!'
+        ? "Excellent work! Time for a long break - you've earned it!"
         : 'Great focus! Time for a short break.';
     }
 
     if (completed === 'longBreak') {
-      return 'Refreshed and ready! Let\'s start a new Pomodoro cycle.';
+      return "Refreshed and ready! Let's start a new Pomodoro cycle.";
     }
 
     return 'Break time over! Ready to get back to work?';
@@ -219,7 +214,7 @@ export function TimerScreen() {
 
   const calculateProgress = (): number => {
     if (!currentSession) return 0;
-    return 1 - (currentSession.remainingTime / currentSession.duration);
+    return 1 - currentSession.remainingTime / currentSession.duration;
   };
 
   const getSessionStatus = (): SessionStatus => {
@@ -228,24 +223,23 @@ export function TimerScreen() {
   };
 
   // Initialize on mount and when screen is focused
-  useFocusEffect(initializeServices);
+  useFocusEffect(
+    useCallback(() => {
+      initializeServices();
+    }, [initializeServices])
+  );
 
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          {/* Could add a loading spinner here */}
-        </View>
+        <View style={styles.loadingContainer}>{/* Could add a loading spinner here */}</View>
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.timerSection}>
           <View style={styles.progressRingContainer}>
             <ProgressRing
@@ -276,10 +270,7 @@ export function TimerScreen() {
         </View>
 
         {cycleProgress && (
-          <CycleProgress
-            progress={cycleProgress}
-            nextSessionType={nextSessionType}
-          />
+          <CycleProgress progress={cycleProgress} nextSessionType={nextSessionType} />
         )}
       </ScrollView>
     </SafeAreaView>

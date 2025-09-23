@@ -37,6 +37,8 @@ export class TimerService implements TimerServiceContract {
       status: 'running',
       startedAt: new Date(),
       completedAt: null,
+      pausedAt: null,
+      resumedAt: null,
     };
 
     this.startTimer();
@@ -110,8 +112,8 @@ export class TimerService implements TimerServiceContract {
       remainingTime: this.currentSession.duration,
       startedAt: null,
       completedAt: null,
-      pausedAt: undefined,
-      resumedAt: undefined,
+      pausedAt: null,
+      resumedAt: null,
     };
 
     this.notifyStateChange();
@@ -175,7 +177,7 @@ export class TimerService implements TimerServiceContract {
       this.currentSession.remainingTime = Math.max(0, this.currentSession.remainingTime - 1);
 
       // Notify tick callbacks
-      this.callbacks.onTick.forEach(callback => {
+      this.callbacks.onTick.forEach((callback) => {
         callback(this.currentSession!.remainingTime);
       });
 
@@ -203,7 +205,7 @@ export class TimerService implements TimerServiceContract {
     const completedSession = { ...this.currentSession };
 
     // Notify completion callbacks
-    this.callbacks.onComplete.forEach(callback => {
+    this.callbacks.onComplete.forEach((callback) => {
       callback(completedSession);
     });
 
@@ -213,7 +215,7 @@ export class TimerService implements TimerServiceContract {
   private notifyStateChange(): void {
     if (!this.currentSession) return;
 
-    this.callbacks.onStateChange.forEach(callback => {
+    this.callbacks.onStateChange.forEach((callback) => {
       callback({ ...this.currentSession! });
     });
   }

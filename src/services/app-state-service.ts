@@ -45,7 +45,7 @@ export class AppStateService {
     this.currentState = nextAppState;
 
     // Notify all callbacks
-    this.callbacks.forEach(callback => {
+    this.callbacks.forEach((callback) => {
       try {
         callback(nextAppState);
       } catch (error) {

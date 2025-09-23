@@ -21,6 +21,7 @@
     "@react-navigation/native": "^7.1.17",
     "@xstate/store": "^3.9.2",
     "expo": "~54.0.10",
+    "expo-background-fetch": "^14.0.7",
     "expo-notifications": "^0.32.11",
     "expo-status-bar": "~3.0.8",
     "expo-task-manager": "^14.0.7",

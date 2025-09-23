@@ -50,14 +50,17 @@ export function CycleProgress({ progress, nextSessionType }: CycleProgressProps)
 
   const renderProgressDots = () => {
     const dots = [];
-    const workColor = getSessionColor('work');
-    const breakColor = getSessionColor('shortBreak');
-    const longBreakColor = getSessionColor('longBreak');
 
     // Create 8 dots representing the cycle workflow
     const workflow = [
-      'work', 'shortBreak', 'work', 'shortBreak',
-      'work', 'shortBreak', 'work', 'longBreak'
+      'work',
+      'shortBreak',
+      'work',
+      'shortBreak',
+      'work',
+      'shortBreak',
+      'work',
+      'longBreak',
     ];
 
     for (let i = 0; i < 8; i++) {
@@ -84,9 +87,9 @@ export function CycleProgress({ progress, nextSessionType }: CycleProgressProps)
               borderColor: isCurrent ? dotColor : 'transparent',
               opacity: isCurrent ? 1 : isCompleted ? 0.8 : 0.3,
               transform: [{ scale: isCurrent ? 1.2 : 1 }],
-            }
+            },
           ]}
-        />
+        />,
       );
     }
 
@@ -104,9 +107,7 @@ export function CycleProgress({ progress, nextSessionType }: CycleProgressProps)
         </Text>
       </View>
 
-      <View style={styles.progressRow}>
-        {renderProgressDots()}
-      </View>
+      <View style={styles.progressRow}>{renderProgressDots()}</View>
 
       <View style={styles.stats}>
         <View style={styles.statItem}>
