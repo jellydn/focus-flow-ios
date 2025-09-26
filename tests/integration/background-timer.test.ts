@@ -1,7 +1,37 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Create a stateful mock storage
+const mockStorage = new Map<string, string>();
+
+// Mock AsyncStorage BEFORE importing services
+vi.mock('@react-native-async-storage/async-storage', () => ({
+  default: {
+    getItem: vi.fn((key: string) => Promise.resolve(mockStorage.get(key) || null)),
+    setItem: vi.fn((key: string, value: string) => {
+      mockStorage.set(key, value);
+      return Promise.resolve();
+    }),
+    removeItem: vi.fn((key: string) => {
+      mockStorage.delete(key);
+      return Promise.resolve();
+    }),
+    clear: vi.fn(() => {
+      mockStorage.clear();
+      return Promise.resolve();
+    }),
+    getAllKeys: vi.fn(() => Promise.resolve(Array.from(mockStorage.keys()))),
+    multiGet: vi.fn(() => Promise.resolve([])),
+    multiSet: vi.fn(() => Promise.resolve()),
+    mergeItem: vi.fn(() => Promise.resolve()),
+    multiMerge: vi.fn(() => Promise.resolve()),
+    multiRemove: vi.fn(() => Promise.resolve()),
+    flushGetRequests: vi.fn(() => Promise.resolve()),
+  },
+}));
+
+// Now import services after mocking AsyncStorage
 import { AppStateService } from '@/services/app-state-service';
 import { BackgroundTimerService } from '@/services/background-timer';
-// This will fail until implementation exists
 import { TimerService } from '@/services/timer-service';
 
 describe('Background Timer Recovery Integration Tests', () => {
@@ -11,9 +41,15 @@ describe('Background Timer Recovery Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockStorage.clear(); // Clear mock storage between tests
+    vi.useFakeTimers(); // Enable fake timers for time manipulation
     timerService = new TimerService();
-    backgroundTimerService = new BackgroundTimerService();
+    backgroundTimerService = timerService.getBackgroundTimerService(); // Use the same instance
     appStateService = new AppStateService();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers(); // Restore real timers after each test
   });
 
   describe('Background Timer Continuity', () => {
@@ -119,11 +155,16 @@ describe('Background Timer Recovery Integration Tests', () => {
     });
 
     it('should unregister background task when session completes', async () => {
-      const _session = await timerService.startSession('work', 5);
+      const session = await timerService.startSession('work', 5);
+      expect(session.remainingTime).toBe(5); // Verify initial state
 
       // Wait for completion
       vi.advanceTimersByTime(6000);
-      await timerService.handleBackgroundTimer();
+      const recoveredSession = await timerService.handleBackgroundTimer();
+
+      // Verify session is actually completed
+      expect(recoveredSession.status).toBe('completed');
+      expect(recoveredSession.remainingTime).toBe(0);
 
       // Background task should be cleaned up
       const isBackgroundTaskActive = await backgroundTimerService.isTaskActive();
@@ -272,7 +313,9 @@ describe('Background Timer Recovery Integration Tests', () => {
     it('should reduce background activity in low power mode', async () => {
       await timerService.startSession('work', 1500);
 
+      // Manually trigger low power mode on background service for testing
       await appStateService.handleLowPowerMode(true);
+      await backgroundTimerService.handleLowPowerMode(true);
       const lowPowerState = await backgroundTimerService.isLowPowerModeActive();
       expect(lowPowerState).toBe(true);
 

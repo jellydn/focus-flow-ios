@@ -1,5 +1,35 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-// This will fail until implementation exists
+
+// Create a stateful mock storage to simulate actual persistence
+const mockStorage = new Map<string, string>();
+
+// Mock AsyncStorage BEFORE importing TimerService
+vi.mock('@react-native-async-storage/async-storage', () => ({
+  default: {
+    getItem: vi.fn((key: string) => Promise.resolve(mockStorage.get(key) || null)),
+    setItem: vi.fn((key: string, value: string) => {
+      mockStorage.set(key, value);
+      return Promise.resolve();
+    }),
+    removeItem: vi.fn((key: string) => {
+      mockStorage.delete(key);
+      return Promise.resolve();
+    }),
+    clear: vi.fn(() => {
+      mockStorage.clear();
+      return Promise.resolve();
+    }),
+    getAllKeys: vi.fn(() => Promise.resolve(Array.from(mockStorage.keys()))),
+    multiGet: vi.fn(() => Promise.resolve([])),
+    multiSet: vi.fn(() => Promise.resolve()),
+    mergeItem: vi.fn(() => Promise.resolve()),
+    multiMerge: vi.fn(() => Promise.resolve()),
+    multiRemove: vi.fn(() => Promise.resolve()),
+    flushGetRequests: vi.fn(() => Promise.resolve()),
+  },
+}));
+
+// Now import TimerService after mocking AsyncStorage
 import { TimerService } from '@/services/timer-service';
 import type { TimerServiceContract } from '@/types/timer-session';
 
@@ -8,6 +38,7 @@ describe('TimerService Contract Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockStorage.clear(); // Clear mock storage between tests for isolation
     timerService = new TimerService();
   });
 
@@ -116,11 +147,13 @@ describe('TimerService Contract Tests', () => {
     it('should schedule notification for session completion', async () => {
       const session = await timerService.startSession('work', 1500);
 
-      await expect(timerService.scheduleNotification(session)).resolves.not.toThrow();
+      // Method should complete without throwing (returns void/undefined)
+      await expect(timerService.scheduleNotification(session)).resolves.toBeUndefined();
     });
 
     it('should cancel all notifications', async () => {
-      await expect(timerService.cancelNotifications()).resolves.not.toThrow();
+      // Method should complete without throwing (returns void/undefined)
+      await expect(timerService.cancelNotifications()).resolves.toBeUndefined();
     });
 
     it('should handle background timer state', async () => {

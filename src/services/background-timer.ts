@@ -51,22 +51,18 @@ export class BackgroundTimerService {
   async stopTask(): Promise<void> {
     try {
       await BackgroundFetch.unregisterTaskAsync(BACKGROUND_TIMER_TASK);
-      this.taskOptions = null;
     } catch (error) {
       console.error('Failed to stop background task:', error);
     }
+
+    // Always clear task options, even if unregistration fails
+    this.taskOptions = null;
   }
 
   async isTaskActive(): Promise<boolean> {
-    try {
-      const status = await BackgroundFetch.getStatusAsync();
-      return (
-        status === BackgroundFetch.BackgroundFetchStatus.Available && this.taskOptions !== null
-      );
-    } catch (error) {
-      console.error('Failed to check task status:', error);
-      return false;
-    }
+    // Task is active if we have task options stored
+    // This is the primary indicator of whether we have an active background task
+    return this.taskOptions !== null;
   }
 
   async getTaskOptions(): Promise<BackgroundTaskOptions | null> {

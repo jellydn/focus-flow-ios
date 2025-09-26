@@ -92,6 +92,11 @@ export class NotificationService {
         return;
       }
 
+      if (!session.id || session.duration <= 0 || session.remainingTime <= 0) {
+        console.log('Not scheduling notification for invalid session data');
+        return;
+      }
+
       const scheduledTime = new Date(Date.now() + session.remainingTime * 1000);
       const content = this.createNotificationContent(session);
 

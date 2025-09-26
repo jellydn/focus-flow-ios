@@ -37,20 +37,24 @@ const initialState: CycleState = {
 export const cycleStore = createStore({
   context: initialState,
   on: {
-    startCycle: () => ({
-      cycleId: nanoid(),
-      currentPosition: 1,
-      totalPositions: 8,
-      workSessionsCompleted: 0,
-      shortBreaksCompleted: 0,
-      longBreakCompleted: false,
-      isComplete: false,
-      startedAt: new Date(),
-      completedAt: null,
-      workSessionIds: [],
-      shortBreakIds: [],
-      longBreakId: null,
-    }),
+    startCycle: () => {
+      const newState = {
+        cycleId: nanoid(),
+        currentPosition: 1,
+        totalPositions: 8,
+        workSessionsCompleted: 0,
+        shortBreaksCompleted: 0,
+        longBreakCompleted: false,
+        isComplete: false,
+        startedAt: new Date(),
+        completedAt: null,
+        workSessionIds: [],
+        shortBreakIds: [],
+        longBreakId: null,
+      };
+      console.log('startCycle: returning new state:', newState);
+      return newState;
+    },
 
     completeSession: (
       context: CycleState,

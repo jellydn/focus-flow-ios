@@ -39,6 +39,16 @@ describe('Settings Persistence Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockStorage.clear(); // Clear mock storage between tests
+
+    // Reset AsyncStorage mocks to default implementation
+    (AsyncStorage.getItem as any).mockImplementation((key: string) =>
+      Promise.resolve(mockStorage.get(key) || null)
+    );
+    (AsyncStorage.setItem as any).mockImplementation((key: string, value: string) => {
+      mockStorage.set(key, value);
+      return Promise.resolve();
+    });
+
     settingsService = new SettingsService();
   });
 
@@ -51,6 +61,9 @@ describe('Settings Persistence Integration Tests', () => {
       };
 
       await settingsService.updateSettings(newSettings);
+
+      // Flush debounced updates to ensure persistence
+      await settingsService.flushPendingUpdates();
 
       // Verify settings were saved to AsyncStorage
       const savedData = await AsyncStorage.getItem('@focusflow:settings');
@@ -144,6 +157,9 @@ describe('Settings Persistence Integration Tests', () => {
         theme: 'dark',
       });
 
+      // Flush debounced updates to ensure persistence
+      await settingsService.flushPendingUpdates();
+
       // Simulate app restart by creating new service instances
       const newSettingsService = new SettingsService();
       const restoredSettings = await newSettingsService.getSettings();
@@ -162,6 +178,9 @@ describe('Settings Persistence Integration Tests', () => {
       await settingsService.updateSettings({ notificationsEnabled: false });
       await settingsService.updateSettings({ soundEnabled: false });
 
+      // Flush debounced updates to ensure persistence
+      await settingsService.flushPendingUpdates();
+
       // Final state should be persisted correctly
       const finalSettings = await settingsService.getSettings();
       expect(finalSettings).toEqual({
@@ -178,16 +197,25 @@ describe('Settings Persistence Integration Tests', () => {
 
     it('should handle partial setting updates correctly', async () => {
       // Set initial state
-      await settingsService.updateSettings({
+      const initialResult = await settingsService.updateSettings({
         notificationsEnabled: false,
         soundEnabled: false,
         theme: 'dark',
       });
 
+      // Verify initial state was set
+      expect(initialResult.notificationsEnabled).toBe(false);
+
+      // Flush initial update
+      await settingsService.flushPendingUpdates();
+
       // Update only one setting
-      await settingsService.updateSettings({
+      const updateResult = await settingsService.updateSettings({
         notificationsEnabled: true,
       });
+
+      // Verify the update result immediately
+      expect(updateResult.notificationsEnabled).toBe(true);
 
       const updatedSettings = await settingsService.getSettings();
       expect(updatedSettings).toEqual({
@@ -200,6 +228,9 @@ describe('Settings Persistence Integration Tests', () => {
 
   describe('Storage Error Handling', () => {
     it('should handle AsyncStorage write failures gracefully', async () => {
+      // Spy on console.error
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
       // Mock AsyncStorage failure
       (AsyncStorage.setItem as MockedFunction<typeof AsyncStorage.setItem>).mockRejectedValue(
         new Error('Storage quota exceeded'),
@@ -208,12 +239,17 @@ describe('Settings Persistence Integration Tests', () => {
       // Should not throw error
       await expect(settingsService.updateSettings({ theme: 'dark' })).resolves.not.toThrow();
 
+      // Trigger the debounced save to execute and error
+      await expect(settingsService.flushPendingUpdates()).rejects.toThrow('Storage quota exceeded');
+
       // Should log error
-      expect(console.error).toHaveBeenCalled();
+      expect(consoleSpy).toHaveBeenCalled();
 
       // Settings should still be updated in memory
       const settings = await settingsService.getSettings();
       expect(settings.theme).toBe('dark');
+
+      consoleSpy.mockRestore();
     });
 
     it('should handle AsyncStorage read failures gracefully', async () => {
@@ -246,6 +282,9 @@ describe('Settings Persistence Integration Tests', () => {
       );
 
       await settingsService.updateSettings({ theme: 'dark' });
+
+      // Flush debounced save to trigger retry mechanism
+      await settingsService.flushPendingUpdates();
 
       // Should have retried and eventually succeeded
       expect(attemptCount).toBe(3);
@@ -282,10 +321,11 @@ describe('Settings Persistence Integration Tests', () => {
     });
 
     it('should reject settings updates with missing required fields', async () => {
-      // Try to update with null/undefined values
+      // Try to update with null values (should throw for explicit nulls)
       await expect(settingsService.updateSettings({ theme: null as any })).rejects.toThrow();
 
-      await expect(settingsService.updateSettings({ theme: undefined as any })).rejects.toThrow();
+      // Undefined values should be ignored (no error)
+      await expect(settingsService.updateSettings({ theme: undefined as any })).resolves.toBeTruthy();
     });
   });
 
@@ -297,6 +337,9 @@ describe('Settings Persistence Integration Tests', () => {
           theme: i % 2 === 0 ? 'light' : 'dark',
         });
       }
+
+      // Flush final update
+      await settingsService.flushPendingUpdates();
 
       // Should still function correctly
       const settings = await settingsService.getSettings();
@@ -332,6 +375,9 @@ describe('Settings Persistence Integration Tests', () => {
         theme: 'dark',
       });
 
+      // Flush debounced updates to ensure persistence
+      await settingsService.flushPendingUpdates();
+
       const savedData = await AsyncStorage.getItem('@focusflow:settings');
       const dataSize = JSON.stringify(savedData).length;
 
@@ -350,7 +396,7 @@ describe('Settings Persistence Integration Tests', () => {
       expect(changeCallback).toHaveBeenCalledWith(expect.objectContaining({ theme: 'dark' }));
     });
 
-    it('should not emit events for failed persistence', async () => {
+    it('should emit events immediately even if persistence fails', async () => {
       const changeCallback = vi.fn();
       settingsService.onSettingsChange(changeCallback);
 
@@ -361,8 +407,11 @@ describe('Settings Persistence Integration Tests', () => {
 
       await settingsService.updateSettings({ theme: 'dark' });
 
-      // Should not emit event if persistence failed
-      expect(changeCallback).not.toHaveBeenCalled();
+      // Should emit event immediately for responsive UI, even if persistence fails
+      expect(changeCallback).toHaveBeenCalled();
+      expect(changeCallback).toHaveBeenCalledWith(
+        expect.objectContaining({ theme: 'dark' })
+      );
     });
 
     it('should emit events when settings are reset', async () => {

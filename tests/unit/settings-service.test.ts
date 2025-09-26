@@ -115,6 +115,9 @@ describe('SettingsService Contract Tests', () => {
         theme: 'dark',
       });
 
+      // Flush debounced updates to ensure persistence
+      await settingsService.flushPendingUpdates();
+
       const retrievedSettings = await settingsService.getSettings();
 
       expect(retrievedSettings).toMatchObject({

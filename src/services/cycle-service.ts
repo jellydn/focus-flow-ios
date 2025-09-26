@@ -178,6 +178,11 @@ export class CycleService implements CycleServiceContract {
 
     const totalCompletedSessions = workSessions + shortBreaks + longBreak;
 
+    // If cycle is complete, return final position (8)
+    if (this.isCycleComplete()) {
+      return 8;
+    }
+
     // Position is 1-based, so add 1 to get the next position
     return totalCompletedSessions + 1;
   }

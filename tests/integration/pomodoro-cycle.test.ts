@@ -1,8 +1,38 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Create a stateful mock storage
+const mockStorage = new Map<string, string>();
+
+// Mock AsyncStorage BEFORE importing services
+vi.mock('@react-native-async-storage/async-storage', () => ({
+  default: {
+    getItem: vi.fn((key: string) => Promise.resolve(mockStorage.get(key) || null)),
+    setItem: vi.fn((key: string, value: string) => {
+      mockStorage.set(key, value);
+      return Promise.resolve();
+    }),
+    removeItem: vi.fn((key: string) => {
+      mockStorage.delete(key);
+      return Promise.resolve();
+    }),
+    clear: vi.fn(() => {
+      mockStorage.clear();
+      return Promise.resolve();
+    }),
+    getAllKeys: vi.fn(() => Promise.resolve(Array.from(mockStorage.keys()))),
+    multiGet: vi.fn(() => Promise.resolve([])),
+    multiSet: vi.fn(() => Promise.resolve()),
+    mergeItem: vi.fn(() => Promise.resolve()),
+    multiMerge: vi.fn(() => Promise.resolve()),
+    multiRemove: vi.fn(() => Promise.resolve()),
+    flushGetRequests: vi.fn(() => Promise.resolve()),
+  },
+}));
+
+// Now import services after mocking
 import { CycleService } from '@/services/cycle-service';
 import { HistoryService } from '@/services/history-service';
 import { SettingsService } from '@/services/settings-service';
-// This will fail until implementation exists
 import { TimerService } from '@/services/timer-service';
 
 describe('Complete Pomodoro Cycle Integration Tests', () => {
@@ -13,6 +43,7 @@ describe('Complete Pomodoro Cycle Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockStorage.clear(); // Clear mock storage between tests
     timerService = new TimerService();
     cycleService = new CycleService();
     historyService = new HistoryService();
@@ -135,6 +166,10 @@ describe('Complete Pomodoro Cycle Integration Tests', () => {
       // Manual stop (no automatic transition)
       const stoppedSession = await timerService.stopSession();
       expect(stoppedSession.status).toBe('idle');
+
+      // Record completion manually (user responsibility in MVP)
+      await historyService.recordCompletedSession('work', 1500);
+      await cycleService.recordSessionCompletion(workSession.id);
 
       // User must manually start next session
       const nextType = await cycleService.getNextSessionType();

@@ -1,5 +1,35 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-// This will fail until implementation exists
+
+// Create a stateful mock storage to simulate actual persistence
+const mockStorage = new Map<string, string>();
+
+// Mock AsyncStorage BEFORE importing HistoryService
+vi.mock('@react-native-async-storage/async-storage', () => ({
+  default: {
+    getItem: vi.fn((key: string) => Promise.resolve(mockStorage.get(key) || null)),
+    setItem: vi.fn((key: string, value: string) => {
+      mockStorage.set(key, value);
+      return Promise.resolve();
+    }),
+    removeItem: vi.fn((key: string) => {
+      mockStorage.delete(key);
+      return Promise.resolve();
+    }),
+    clear: vi.fn(() => {
+      mockStorage.clear();
+      return Promise.resolve();
+    }),
+    getAllKeys: vi.fn(() => Promise.resolve(Array.from(mockStorage.keys()))),
+    multiGet: vi.fn(() => Promise.resolve([])),
+    multiSet: vi.fn(() => Promise.resolve()),
+    mergeItem: vi.fn(() => Promise.resolve()),
+    multiMerge: vi.fn(() => Promise.resolve()),
+    multiRemove: vi.fn(() => Promise.resolve()),
+    flushGetRequests: vi.fn(() => Promise.resolve()),
+  },
+}));
+
+// Now import HistoryService after mocking AsyncStorage
 import { HistoryService } from '@/services/history-service';
 import type { HistoryServiceContract } from '@/types/session-history';
 
@@ -8,6 +38,7 @@ describe('HistoryService Contract Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockStorage.clear(); // Clear mock storage between tests for isolation
     historyService = new HistoryService();
   });
 
@@ -160,11 +191,13 @@ describe('HistoryService Contract Tests', () => {
 
   describe('Data Cleanup', () => {
     it('should cleanup old history (>30 days)', async () => {
-      await expect(historyService.cleanupOldHistory()).resolves.not.toThrow();
+      // Method should complete without throwing
+      await expect(historyService.cleanupOldHistory()).resolves.toBeUndefined();
     });
 
     it('should cleanup old aggregates (>6 months)', async () => {
-      await expect(historyService.cleanupOldAggregates()).resolves.not.toThrow();
+      // Method should complete without throwing
+      await expect(historyService.cleanupOldAggregates()).resolves.toBeUndefined();
     });
   });
 

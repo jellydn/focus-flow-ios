@@ -47,6 +47,14 @@ export class HistoryService implements HistoryServiceContract {
 
     await this.saveHistory(todayHistory);
 
+    // Check and update streak for work sessions
+    if (type === 'work') {
+      const newStreak = await this.getCurrentStreak();
+      this.callbacks.onStreakUpdate.forEach((callback) => {
+        callback(newStreak);
+      });
+    }
+
     // Notify callbacks
     this.callbacks.onHistoryUpdate.forEach((callback) => {
       callback({ ...todayHistory! });
@@ -82,9 +90,16 @@ export class HistoryService implements HistoryServiceContract {
     return { ...todayHistory };
   }
 
-  async getTodayHistory(): Promise<SessionHistory | null> {
+  async getTodayHistory(): Promise<SessionHistory> {
     const today = this.getTodayDateString();
-    return this.getHistoryByDate(today);
+    const history = await this.getHistoryByDate(today);
+
+    // Return default history if none exists
+    if (!history) {
+      return this.createNewDayHistory(today);
+    }
+
+    return history;
   }
 
   async getHistoryByDate(date: string): Promise<SessionHistory | null> {
