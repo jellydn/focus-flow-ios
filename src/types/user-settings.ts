@@ -17,6 +17,9 @@ export interface SettingsServiceContract {
   getShortBreakDuration(): number; // 300 seconds (5 minutes)
   getLongBreakDuration(): number; // 900 seconds (15 minutes)
 
+  // Internal methods for testing
+  flushPendingUpdates(): Promise<void>;
+
   // Event handlers
   onSettingsChange(callback: (settings: UserSettings) => void): void;
 }

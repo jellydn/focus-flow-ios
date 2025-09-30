@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Create a stateful mock storage
 const mockStorage = new Map<string, string>();
@@ -36,19 +36,23 @@ vi.mock('@react-native-async-storage/async-storage', () => ({
 // Mock Expo Notifications BEFORE importing services
 vi.mock('expo-notifications', () => ({
   setNotificationHandler: vi.fn(),
-  requestPermissionsAsync: vi.fn(() => Promise.resolve({
-    status: 'granted',
-    canAskAgain: true,
-  })),
-  getPermissionsAsync: vi.fn(() => Promise.resolve({
-    status: 'granted',
-    canAskAgain: true,
-  })),
+  requestPermissionsAsync: vi.fn(() =>
+    Promise.resolve({
+      status: 'granted',
+      canAskAgain: true,
+    }),
+  ),
+  getPermissionsAsync: vi.fn(() =>
+    Promise.resolve({
+      status: 'granted',
+      canAskAgain: true,
+    }),
+  ),
   scheduleNotificationAsync: vi.fn((notification) => {
     const id = notification.identifier || `notification-${Date.now()}`;
     const trigger = {
       ...notification.trigger,
-      date: new Date(Date.now() + (notification.trigger.seconds * 1000)),
+      date: new Date(Date.now() + notification.trigger.seconds * 1000),
     };
     mockNotifications.set(id, {
       identifier: id,
@@ -66,11 +70,9 @@ vi.mock('expo-notifications', () => ({
     return Promise.resolve();
   }),
   getAllScheduledNotificationsAsync: vi.fn(() =>
-    Promise.resolve(Array.from(mockNotifications.values()))
+    Promise.resolve(Array.from(mockNotifications.values())),
   ),
-  getPresentedNotificationsAsync: vi.fn(() =>
-    Promise.resolve([...mockDeliveredNotifications])
-  ),
+  getPresentedNotificationsAsync: vi.fn(() => Promise.resolve([...mockDeliveredNotifications])),
   SchedulableTriggerInputTypes: {
     TIME_INTERVAL: 'timeInterval',
   },
@@ -243,11 +245,14 @@ describe('Notification Scheduling Integration Tests', () => {
       notificationService.updateSettings({ notificationsEnabled: true });
 
       for (const testCase of testCases) {
-        const session = await timerService.startSession(testCase.sessionType as any, 300);
+        const session = await timerService.startSession(
+          testCase.sessionType as 'work' | 'shortBreak' | 'longBreak',
+          300,
+        );
         await notificationService.scheduleSessionCompletion(session);
 
         const notifications = await notificationService.getAllScheduledNotifications();
-        const notification = notifications.find((n) =>
+        const notification = notifications.find((n: any) =>
           n.content.title.includes(testCase.expectedTitle),
         );
 
@@ -461,8 +466,12 @@ describe('Notification Scheduling Integration Tests', () => {
 
       // Mock Expo Notifications scheduling failure
       const Notifications = await import('expo-notifications');
-      const originalScheduleMock = (Notifications.scheduleNotificationAsync as any).getMockImplementation();
-      (Notifications.scheduleNotificationAsync as any).mockRejectedValue(new Error('Notification scheduling failed'));
+      const originalScheduleMock = (
+        Notifications.scheduleNotificationAsync as any
+      ).getMockImplementation();
+      (Notifications.scheduleNotificationAsync as any).mockRejectedValue(
+        new Error('Notification scheduling failed'),
+      );
 
       const session = await timerService.startSession('work', 1500);
 

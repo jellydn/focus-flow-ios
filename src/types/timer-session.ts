@@ -1,6 +1,6 @@
 export type SessionType = 'work' | 'shortBreak' | 'longBreak';
 
-export type SessionStatus = 'idle' | 'running' | 'paused' | 'completed';
+export type SessionStatus = 'idle' | 'running' | 'paused' | 'completed' | 'corrupted';
 
 export interface TimerSession {
   id: string;

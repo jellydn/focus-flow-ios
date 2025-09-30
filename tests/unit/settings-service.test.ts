@@ -203,7 +203,7 @@ describe('SettingsService Contract Tests', () => {
 
     it('should handle storage errors gracefully', async () => {
       // Mock storage error
-      const _mockError = new Error('Storage error');
+      new Error('Storage error'); // Mock error for potential storage testing
       vi.spyOn(console, 'error').mockImplementation(() => {});
 
       // This should be handled by the implementation

@@ -193,7 +193,10 @@ export class TimerService implements TimerServiceContract {
           const newRemainingTime = Math.max(0, this.currentSession.duration - elapsedSeconds);
 
           // Ensure remaining time never exceeds original duration (another anomaly check)
-          this.currentSession.remainingTime = Math.min(newRemainingTime, this.currentSession.duration);
+          this.currentSession.remainingTime = Math.min(
+            newRemainingTime,
+            this.currentSession.duration,
+          );
         }
       }
       // If paused, remainingTime stays the same

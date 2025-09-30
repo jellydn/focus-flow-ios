@@ -42,7 +42,7 @@ describe('Settings Persistence Integration Tests', () => {
 
     // Reset AsyncStorage mocks to default implementation
     (AsyncStorage.getItem as any).mockImplementation((key: string) =>
-      Promise.resolve(mockStorage.get(key) || null)
+      Promise.resolve(mockStorage.get(key) || null),
     );
     (AsyncStorage.setItem as any).mockImplementation((key: string, value: string) => {
       mockStorage.set(key, value);
@@ -236,8 +236,9 @@ describe('Settings Persistence Integration Tests', () => {
         new Error('Storage quota exceeded'),
       );
 
-      // Should not throw error
-      await expect(settingsService.updateSettings({ theme: 'dark' })).resolves.not.toThrow();
+      // Should return updated settings but fail to persist
+      const result = await settingsService.updateSettings({ theme: 'dark' });
+      expect(result.theme).toBe('dark');
 
       // Trigger the debounced save to execute and error
       await expect(settingsService.flushPendingUpdates()).rejects.toThrow('Storage quota exceeded');
@@ -286,7 +287,7 @@ describe('Settings Persistence Integration Tests', () => {
       // Flush debounced save to trigger retry mechanism
       await settingsService.flushPendingUpdates();
 
-      // Should have retried and eventually succeeded
+      // Should have retried maximum attempts
       expect(attemptCount).toBe(3);
       expect(AsyncStorage.setItem).toHaveBeenCalledTimes(3);
     });
@@ -325,7 +326,9 @@ describe('Settings Persistence Integration Tests', () => {
       await expect(settingsService.updateSettings({ theme: null as any })).rejects.toThrow();
 
       // Undefined values should be ignored (no error)
-      await expect(settingsService.updateSettings({ theme: undefined as any })).resolves.toBeTruthy();
+      await expect(
+        settingsService.updateSettings({ theme: undefined as any }),
+      ).resolves.toBeTruthy();
     });
   });
 
@@ -409,9 +412,7 @@ describe('Settings Persistence Integration Tests', () => {
 
       // Should emit event immediately for responsive UI, even if persistence fails
       expect(changeCallback).toHaveBeenCalled();
-      expect(changeCallback).toHaveBeenCalledWith(
-        expect.objectContaining({ theme: 'dark' })
-      );
+      expect(changeCallback).toHaveBeenCalledWith(expect.objectContaining({ theme: 'dark' }));
     });
 
     it('should emit events when settings are reset', async () => {

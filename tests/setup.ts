@@ -1,15 +1,18 @@
 // Setup DOM window IMMEDIATELY - must be first to prevent AsyncStorage errors
+// Also set React Native globals first
+(global as unknown as { __DEV__: boolean }).__DEV__ = true;
+(globalThis as unknown as { __DEV__: boolean }).__DEV__ = true;
 const mockStorageSync = {
-  getItem: (key: string) => null,
-  setItem: (key: string, value: string) => {},
-  removeItem: (key: string) => {},
+  getItem: (_key: string) => null,
+  setItem: (_key: string, _value: string) => {},
+  removeItem: (_key: string) => {},
   clear: () => {},
-  key: (index: number) => null,
+  key: (_index: number) => null,
   length: 0,
 };
 
 // Create comprehensive window object with localStorage before ANY imports
-(global as any).window = {
+(global as unknown as { window: unknown }).window = {
   localStorage: mockStorageSync,
   sessionStorage: mockStorageSync,
   location: { href: 'http://localhost:3000' },
@@ -22,13 +25,18 @@ const mockStorageSync = {
 };
 
 // Set globals on globalThis for complete compatibility
-(globalThis as any).window = (global as any).window;
-(globalThis as any).localStorage = mockStorageSync;
-(global as any).localStorage = mockStorageSync;
+(globalThis as unknown as { window: unknown }).window = (
+  global as unknown as { window: unknown }
+).window;
+(globalThis as unknown as { localStorage: unknown }).localStorage = mockStorageSync;
+(global as unknown as { localStorage: unknown }).localStorage = mockStorageSync;
 
-// React Native environment globals
-global.__DEV__ = true;
-(globalThis as any).__DEV__ = true;
+// React Native environment globals - define before any imports
+(global as unknown as { __DEV__: boolean }).__DEV__ = true;
+(globalThis as unknown as { __DEV__: boolean }).__DEV__ = true;
+(global as unknown as { process: { env: { NODE_ENV: string } } }).process = {
+  env: { NODE_ENV: 'test' },
+};
 
 // Import Vitest AFTER setting up all globals
 import { vi } from 'vitest';
@@ -56,16 +64,16 @@ vi.mock('react-native', () => ({
 
 // Create a comprehensive AsyncStorage mock that doesn't rely on window
 const mockAsyncStorage = {
-  getItem: vi.fn((key: string) => Promise.resolve(null)),
-  setItem: vi.fn((key: string, value: string) => Promise.resolve()),
-  removeItem: vi.fn((key: string) => Promise.resolve()),
+  getItem: vi.fn((_key: string) => Promise.resolve(null)),
+  setItem: vi.fn((_key: string, _value: string) => Promise.resolve()),
+  removeItem: vi.fn((_key: string) => Promise.resolve()),
   clear: vi.fn(() => Promise.resolve()),
   getAllKeys: vi.fn(() => Promise.resolve([])),
-  multiGet: vi.fn((keys: string[]) => Promise.resolve([])),
-  multiSet: vi.fn((keyValuePairs: [string, string][]) => Promise.resolve()),
-  mergeItem: vi.fn((key: string, value: string) => Promise.resolve()),
-  multiMerge: vi.fn((keyValuePairs: [string, string][]) => Promise.resolve()),
-  multiRemove: vi.fn((keys: string[]) => Promise.resolve()),
+  multiGet: vi.fn((_keys: string[]) => Promise.resolve([])),
+  multiSet: vi.fn((_keyValuePairs: [string, string][]) => Promise.resolve()),
+  mergeItem: vi.fn((_key: string, _value: string) => Promise.resolve()),
+  multiMerge: vi.fn((_keyValuePairs: [string, string][]) => Promise.resolve()),
+  multiRemove: vi.fn((_keys: string[]) => Promise.resolve()),
   flushGetRequests: vi.fn(() => Promise.resolve()),
 };
 
@@ -73,10 +81,10 @@ const mockAsyncStorage = {
 vi.mock('@react-native-async-storage/async-storage', () => ({
   default: mockAsyncStorage,
   __esModule: true,
-}), { hoisted: true });
+}));
 
 // Also create a backup mock for any direct imports
-(global as any).AsyncStorage = mockAsyncStorage;
+(global as unknown as { AsyncStorage: unknown }).AsyncStorage = mockAsyncStorage;
 
 // Mock Expo modules
 vi.mock('expo-notifications', () => ({
@@ -131,7 +139,9 @@ vi.mock('@react-navigation/native', () => ({
 }));
 
 // Global test utilities
-global.setImmediate = vi.fn((cb) => setTimeout(cb, 0));
+(global as unknown as { setImmediate: unknown }).setImmediate = vi.fn((cb: unknown) =>
+  setTimeout(cb as () => void, 0),
+);
 
 // Mock console methods for testing
 global.console = {

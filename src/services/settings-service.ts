@@ -33,7 +33,7 @@ export class SettingsService implements SettingsServiceContract {
   private async waitForInitialization(): Promise<void> {
     // Simple polling approach to wait for initialization
     while (!this.isInitialized) {
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
     }
   }
 
@@ -223,7 +223,11 @@ export class SettingsService implements SettingsServiceContract {
     return ['light', 'dark', 'system'].includes(value);
   }
 
-  private async saveToStorageWithRetry(key: string, value: string, maxRetries: number = 3): Promise<void> {
+  private async saveToStorageWithRetry(
+    key: string,
+    value: string,
+    maxRetries: number = 3,
+  ): Promise<void> {
     let attemptCount = 0;
 
     while (attemptCount < maxRetries) {
@@ -236,7 +240,7 @@ export class SettingsService implements SettingsServiceContract {
           throw error; // Final failure after all retries
         }
         // Wait briefly before retry
-        await new Promise(resolve => setTimeout(resolve, 100 * attemptCount));
+        await new Promise((resolve) => setTimeout(resolve, 100 * attemptCount));
       }
     }
   }
